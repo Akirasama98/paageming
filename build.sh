@@ -21,6 +21,11 @@ fi
 # Set Composer memory limit
 export COMPOSER_MEMORY_LIMIT=-1
 
+# Create SQLite database first (before composer install)
+echo "🗄️ Creating SQLite database..."
+mkdir -p database
+touch database/database.sqlite
+
 # Install PHP dependencies
 echo "📦 Installing API dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --verbose
@@ -42,10 +47,6 @@ echo "⚙️ Optimizing Laravel..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
-# Create SQLite database
-echo "🗄️ Creating SQLite database..."
-touch database/database.sqlite
 
 # Run database migrations
 echo "🗄️ Running database migrations..."
