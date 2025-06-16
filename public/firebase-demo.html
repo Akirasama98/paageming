@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Firebase Demo - Paageming</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { color: #333; margin-bottom: 15px; display: flex; align-items: center; }
+        .card h3::before { content: '🔥'; margin-right: 10px; font-size: 1.5em; }
+        
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-left: 10px; }
+        .status-connected { background: #28a745; animation: pulse 2s infinite; }
+        .status-disconnected { background: #dc3545; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .button { background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 5px; font-weight: 600; transition: all 0.3s ease; }
+        .button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,123,255,0.4); }
+        .button.success { background: linear-gradient(45deg, #28a745, #1e7e34); }
+        .button.danger { background: linear-gradient(45deg, #dc3545, #c82333); }
+        .button.warning { background: linear-gradient(45deg, #ffc107, #e0a800); }
+        
+        .response { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-top: 15px; font-family: 'Courier New', monospace; font-size: 12px; max-height: 300px; overflow-y: auto; white-space: pre-wrap; }
+        .response.success { background: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .response.error { background: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        
+        .form-group { margin: 10px 0; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #555; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s ease; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #007bff; }
+        
+        .realtime-counter { display: inline-block; background: #17a2b8; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-left: 10px; }
+        
+        .firebase-logo { width: 30px; height: 30px; vertical-align: middle; margin-right: 10px; }
+        
+        .demo-section { margin: 20px 0; }
+        .demo-section h4 { color: #666; margin-bottom: 10px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; margin-top: 15px; }
+        .product-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; }
+        .product-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+        .product-card h5 { margin-bottom: 5px; color: #333; }
+        .product-card .price { color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Firebase Real-time Demo</h1>
+            <p>Paageming - Agricultural Marketplace with Firebase Integration</p>
+            <div>
+                <span>Firebase Status:</span>
+                <span id="firebase-status-text">Connecting...</span>
+                <span id="firebase-status-indicator" class="status-indicator status-disconnected"></span>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <!-- Firebase Connection Status -->
+            <div class="card">
+                <h3>Connection Status</h3>
+                <div class="demo-section">
+                    <h4>Firebase Services</h4>
+                    <p>🔥 Realtime Database: <span id="db-status">Checking...</span></p>
+                    <p>☁️ Storage: <span id="storage-status">Ready</span></p>
+                    <p>🔑 Authentication: <span id="auth-status">Configured</span></p>
+                </div>
+                <button class="button" onclick="testConnection()">Test Connection</button>
+                <div id="connection-response" class="response"></div>
+            </div>
+
+            <!-- Real-time Product Sync -->
+            <div class="card">
+                <h3>Real-time Products <span id="product-counter" class="realtime-counter">0</span></h3>
+                <div class="demo-section">
+                    <h4>Live Product Feed</h4>
+                    <button class="button success" onclick="startProductListener()">🚀 Start Live Feed</button>
+                    <button class="button danger" onclick="stopProductListener()">⏹️ Stop Feed</button>
+                    <button class="button warning" onclick="loadFirebaseProducts()">📥 Load Products</button>
+                </div>
+                <div id="products-feed" class="response"></div>
+            </div>
+
+            <!-- Product Creation -->
+            <div class="card">
+                <h3>Create Product</h3>
+                <div class="demo-section">
+                    <h4>Add New Product (Auto-sync to Firebase)</h4>
+                    <form onsubmit="createProduct(event)">
+                        <div class="form-group">
+                            <label>Product Name</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="product-description" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (IDR)</label>
+                            <input type="number" id="product-price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Stock</label>
+                            <input type="number" id="product-stock" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="product-category" required>
+                                <option value="">Select Category</option>
+                                <option value="1">Sayuran</option>
+                                <option value="2">Buah-buahan</option>
+                                <option value="3">Biji-bijian</option>
+                                <option value="4">Rempah-rempah</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="button">🔥 Create & Sync to Firebase</button>
+                    </form>
+                </div>
+                <div id="create-response" class="response"></div>
+            </div>
+
+            <!-- Firebase Data Viewer -->
+            <div class="card">
+                <h3>Firebase Data Viewer</h3>
+                <div class="demo-section">
+                    <h4>Browse Firebase Realtime Database</h4>
+                    <button class="button" onclick="viewFirebaseStructure()">🔍 View DB Structure</button>
+                    <button class="button" onclick="exportFirebaseData()">📊 Export Data</button>
+                </div>
+                <div id="firebase-data" class="response"></div>
+            </div>
+        </div>
+
+        <!-- Product Display Grid -->
+        <div class="card" style="margin-top: 20px;">
+            <h3>Product Gallery <span id="gallery-counter" class="realtime-counter">0 products</span></h3>
+            <div id="product-gallery" class="product-grid"></div>
+        </div>
+    </div>
+
+    <!-- Load Firebase Service -->
+    <script src="js/firebase-service.js"></script>
+    
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        let authToken = '';
+        let isListening = false;
+        let productCount = 0;
+
+        // Initialize
+        window.addEventListener('load', async () => {
+            await initializeFirebase();
+            await loginAsAdmin();
+            populateForm();
+        });
+
+        async function initializeFirebase() {
+            try {
+                await window.firebaseService.initialize();
+                updateConnectionStatus(true);
+                document.getElementById('db-status').textContent = '✅ Connected';
+                console.log('🔥 Firebase initialized successfully');
+            } catch (error) {
+                updateConnectionStatus(false);
+                document.getElementById('db-status').textContent = '❌ Failed';
+                console.error('Firebase initialization failed:', error);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusText = document.getElementById('firebase-status-text');
+            const statusIndicator = document.getElementById('firebase-status-indicator');
+            
+            if (connected) {
+                statusText.textContent = 'Connected';
+                statusIndicator.className = 'status-indicator status-connected';
+            } else {
+                statusText.textContent = 'Disconnected';
+                statusIndicator.className = 'status-indicator status-disconnected';
+            }
+        }        async function loginAsAdmin() {
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ email: 'admin@panenku.com', password: 'admin123' })
+                });
+                const data = await response.json();
+                if (data.token) {
+                    authToken = data.token;
+                    console.log('✅ Admin logged in successfully');
+                    document.getElementById('auth-status').textContent = '✅ Logged in as ' + data.user.name;
+                } else {
+                    console.error('Login failed:', data);
+                    document.getElementById('auth-status').textContent = '❌ Login failed';
+                }
+            } catch (error) {
+                console.error('Admin login failed:', error);
+                document.getElementById('auth-status').textContent = '❌ Login error';
+            }
+        }
+
+        async function testConnection() {
+            try {
+                const result = await window.firebaseService.testConnection();
+                document.getElementById('connection-response').className = 'response success';
+                document.getElementById('connection-response').textContent = 
+                    `✅ Firebase Connection Successful!\n` +
+                    `Timestamp: ${result.timestamp}\n` +
+                    `Data: ${JSON.stringify(result.data, null, 2)}`;
+            } catch (error) {
+                document.getElementById('connection-response').className = 'response error';
+                document.getElementById('connection-response').textContent = `❌ Connection Failed: ${error.message}`;
+            }
+        }
+
+        async function startProductListener() {
+            if (isListening) return;
+            
+            isListening = true;
+            document.getElementById('products-feed').className = 'response success';
+            document.getElementById('products-feed').textContent = '🚀 Starting real-time listener...';
+
+            try {
+                await window.firebaseService.listenToProducts((products) => {
+                    productCount = products.length;
+                    document.getElementById('product-counter').textContent = productCount;
+                    document.getElementById('gallery-counter').textContent = `${productCount} products`;
+                    
+                    const timestamp = new Date().toLocaleTimeString();
+                    document.getElementById('products-feed').textContent = 
+                        `🔥 LIVE UPDATE [${timestamp}]\n` +
+                        `Products: ${productCount}\n` +
+                        `Latest: ${products.length > 0 ? products[products.length - 1].name : 'None'}\n\n` +
+                        JSON.stringify(products.slice(-2), null, 2);
+                    
+                    updateProductGallery(products);
+                });
+            } catch (error) {
+                isListening = false;
+                document.getElementById('products-feed').className = 'response error';
+                document.getElementById('products-feed').textContent = `❌ Listener Error: ${error.message}`;
+            }
+        }
+
+        function stopProductListener() {
+            isListening = false;
+            document.getElementById('products-feed').className = 'response';
+            document.getElementById('products-feed').textContent = '⏹️ Real-time listener stopped.';
+        }
+
+        async function loadFirebaseProducts() {
+            try {
+                const products = await window.firebaseService.getProducts();
+                productCount = products.length;
+                document.getElementById('product-counter').textContent = productCount;
+                document.getElementById('gallery-counter').textContent = `${productCount} products`;
+                
+                document.getElementById('products-feed').className = 'response success';
+                document.getElementById('products-feed').textContent = 
+                    `📥 Loaded ${productCount} products from Firebase\n\n` +
+                    JSON.stringify(products, null, 2);
+                
+                updateProductGallery(products);
+            } catch (error) {
+                document.getElementById('products-feed').className = 'response error';
+                document.getElementById('products-feed').textContent = `❌ Load Error: ${error.message}`;
+            }
+        }
+
+        function updateProductGallery(products) {
+            const gallery = document.getElementById('product-gallery');
+            gallery.innerHTML = '';
+            
+            products.slice(-8).forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${product.image || 'https://via.placeholder.com/250x150.png?text=No+Image'}" alt="${product.name}">
+                    <h5>${product.name}</h5>
+                    <p class="price">Rp ${parseInt(product.price).toLocaleString()}</p>
+                    <p>Stock: ${product.stock}</p>
+                    <small>ID: ${product.id}</small>
+                `;
+                gallery.appendChild(card);
+            });
+        }        async function createProduct(event) {
+            event.preventDefault();
+            
+            // Debug logging
+            console.log('Create product called');
+            console.log('Auth token:', authToken ? 'Present' : 'Missing');
+            
+            if (!authToken) {
+                document.getElementById('create-response').className = 'response error';
+                document.getElementById('create-response').textContent = '❌ Please wait for admin login to complete...';
+                return;
+            }
+            
+            try {
+                // Show loading state
+                document.getElementById('create-response').className = 'response';
+                document.getElementById('create-response').textContent = '🔄 Creating product...';
+                
+                const productData = {
+                    name: document.getElementById('product-name').value,
+                    description: document.getElementById('product-description').value,
+                    price: parseInt(document.getElementById('product-price').value),
+                    stock: parseInt(document.getElementById('product-stock').value),
+                    category_id: parseInt(document.getElementById('product-category').value),
+                    image: 'https://via.placeholder.com/300x300.png?text=' + encodeURIComponent(document.getElementById('product-name').value)
+                };
+                
+                console.log('Product data:', productData);
+                
+                const response = await fetch(`${API_BASE}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok) {
+                    document.getElementById('create-response').className = 'response success';
+                    document.getElementById('create-response').textContent = 
+                        `✅ Product Created & Synced to Firebase!\n` +
+                        `ID: ${data.id}\n` +
+                        `Name: ${data.name}\n` +
+                        `Price: Rp ${parseInt(data.price).toLocaleString()}\n\n` +
+                        `🔥 Check Firebase console to see real-time sync!\n` +
+                        `Response: ${JSON.stringify(data, null, 2)}`;
+                    
+                    // Reset form
+                    populateForm();
+                } else {
+                    document.getElementById('create-response').className = 'response error';
+                    document.getElementById('create-response').textContent = 
+                        `❌ Creation Failed (${response.status})\n` +
+                        `Error: ${JSON.stringify(data, null, 2)}`;
+                }
+                
+            } catch (error) {
+                console.error('Create product error:', error);
+                document.getElementById('create-response').className = 'response error';
+                document.getElementById('create-response').textContent = `❌ Network Error: ${error.message}`;
+            }
+        }
+
+        async function viewFirebaseStructure() {
+            document.getElementById('firebase-data').textContent = 
+                `🔥 Firebase Realtime Database Structure:\n\n` +
+                `📁 Root\n` +
+                `├── 📂 products/\n` +
+                `│   ├── 📄 {product_id}/\n` +
+                `│   │   ├── name\n` +
+                `│   │   ├── description\n` +
+                `│   │   ├── price\n` +
+                `│   │   ├── stock\n` +
+                `│   │   ├── category_id\n` +
+                `│   │   └── image\n` +
+                `└── 📂 test/\n` +
+                `    └── 📄 connection\n\n` +
+                `🌐 Console: https://console.firebase.google.com/project/panenku-cd8ea/database`;
+        }
+
+        async function exportFirebaseData() {
+            try {
+                const products = await window.firebaseService.getProducts();
+                const data = {
+                    timestamp: new Date().toISOString(),
+                    product_count: products.length,
+                    products: products
+                };
+                
+                document.getElementById('firebase-data').textContent = 
+                    `📊 Exported Firebase Data:\n\n` +
+                    JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('firebase-data').className = 'response error';
+                document.getElementById('firebase-data').textContent = `❌ Export Error: ${error.message}`;
+            }
+        }
+
+        function populateForm() {
+            const timestamp = new Date().getTime();
+            document.getElementById('product-name').value = `Produk Segar ${timestamp}`;
+            document.getElementById('product-description').value = 'Produk segar berkualitas tinggi dari petani lokal';
+            document.getElementById('product-price').value = Math.floor(Math.random() * 50000) + 10000;
+            document.getElementById('product-stock').value = Math.floor(Math.random() * 100) + 10;
+            document.getElementById('product-category').value = Math.floor(Math.random() * 4) + 1;
+        }
+    </script>
+</body>
+</html>

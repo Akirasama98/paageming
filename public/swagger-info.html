@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Swagger API Testing - Paageming</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 3em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        
+        .card { background: white; border-radius: 15px; padding: 25px; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card h3 { color: #333; margin-bottom: 15px; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        
+        .api-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .endpoint { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin: 10px 0; }
+        .endpoint .method { display: inline-block; padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; font-size: 12px; margin-right: 10px; }
+        .method.get { background: #28a745; }
+        .method.post { background: #007bff; }
+        .method.put { background: #ffc107; color: #333; }
+        .method.delete { background: #dc3545; }
+        
+        .button { background: linear-gradient(45deg, #007bff, #0056b3); color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 5px; text-decoration: none; display: inline-block; font-weight: 600; transition: all 0.3s ease; }
+        .button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,123,255,0.4); }
+        .button.large { padding: 15px 30px; font-size: 18px; }
+        .button.success { background: linear-gradient(45deg, #28a745, #1e7e34); }
+        .button.info { background: linear-gradient(45deg, #17a2b8, #138496); }
+        
+        .swagger-frame { width: 100%; height: 800px; border: none; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .stat-label { color: #666; margin-top: 5px; }
+        
+        .quick-links { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; margin: 20px 0; }
+        .quick-links h4 { color: white; margin-bottom: 15px; }
+        .quick-links a { color: white; text-decoration: none; display: inline-block; margin: 5px 10px; padding: 8px 15px; background: rgba(255,255,255,0.2); border-radius: 5px; transition: all 0.3s ease; }
+        .quick-links a:hover { background: rgba(255,255,255,0.3); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Swagger API Documentation</h1>
+            <p>Panenku - Agricultural Marketplace API Testing Interface</p>
+        </div>
+
+        <div class="quick-links">
+            <h4>🚀 Quick Access Links</h4>
+            <a href="http://127.0.0.1:8000/api/documentation" target="_blank">📖 Swagger UI</a>
+            <a href="http://127.0.0.1:8000/firebase-demo.html" target="_blank">🔥 Firebase Demo</a>
+            <a href="http://127.0.0.1:8000/simple-login-test.html" target="_blank">🔐 Login Test</a>
+            <a href="http://127.0.0.1:8000/debug-create.html" target="_blank">🔧 Debug Tools</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">24</div>
+                <div class="stat-label">API Endpoints</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Controllers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Documented</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">🔥</div>
+                <div class="stat-label">Firebase Ready</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📖 Swagger Interactive Documentation</h3>
+            <p>Dokumentasi API interaktif dengan testing capabilities built-in. Anda bisa mencoba semua endpoint langsung dari interface ini.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="http://127.0.0.1:8000/api/documentation" target="_blank" class="button large">
+                    🚀 Open Swagger UI
+                </a>
+                <button onclick="loadSwaggerInFrame()" class="button large info">
+                    📱 Load in Frame
+                </button>
+            </div>
+            
+            <div id="swagger-container" style="display: none;">
+                <iframe id="swagger-frame" class="swagger-frame" src="about:blank"></iframe>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔗 Available API Endpoints</h3>
+            
+            <div class="api-section">
+                <div>
+                    <h4>🔐 Authentication</h4>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/register</strong><br>
+                        <small>Register new user account</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/login</strong><br>
+                        <small>Login user/admin</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/logout</strong><br>
+                        <small>Logout current user</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>📦 Products</h4>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/products</strong><br>
+                        <small>Get all products</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/products/{id}</strong><br>
+                        <small>Get product details</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/products</strong><br>
+                        <small>Create new product (Admin)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <strong>/api/products/{id}</strong><br>
+                        <small>Update product (Admin)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <strong>/api/products/{id}</strong><br>
+                        <small>Delete product (Admin)</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>📂 Categories</h4>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/categories</strong><br>
+                        <small>Get all categories</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/categories/{id}</strong><br>
+                        <small>Get category details</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/categories</strong><br>
+                        <small>Create category (Admin)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <strong>/api/categories/{id}</strong><br>
+                        <small>Update category (Admin)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <strong>/api/categories/{id}</strong><br>
+                        <small>Delete category (Admin)</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>🛒 Shopping Cart</h4>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/cart</strong><br>
+                        <small>View user's cart</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/cart/add</strong><br>
+                        <small>Add item to cart</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method put">PUT</span>
+                        <strong>/api/cart/update/{item}</strong><br>
+                        <small>Update cart item</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method delete">DELETE</span>
+                        <strong>/api/cart/remove/{item}</strong><br>
+                        <small>Remove item from cart</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/cart/checkout</strong><br>
+                        <small>Checkout cart</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>📋 Orders</h4>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/orders/{id}/confirm</strong><br>
+                        <small>Confirm order (User)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/orders/{id}/verify</strong><br>
+                        <small>Verify order (Admin)</small>
+                    </div>
+                </div>
+
+                <div>
+                    <h4>🔧 Utilities</h4>
+                    <div class="endpoint">
+                        <span class="method get">GET</span>
+                        <strong>/api/users</strong><br>
+                        <small>Get all users (Admin)</small>
+                    </div>
+                    <div class="endpoint">
+                        <span class="method post">POST</span>
+                        <strong>/api/upload/image</strong><br>
+                        <small>Upload image to Firebase (Admin)</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>🔥 Firebase Integration</h3>
+            <p>All product operations automatically sync with Firebase Realtime Database for real-time updates.</p>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <h4>Firebase Features:</h4>
+                <ul>
+                    <li>✅ Real-time Database sync</li>
+                    <li>✅ Cloud Storage for images</li>
+                    <li>✅ Automatic backup</li>
+                    <li>✅ Web SDK integration</li>
+                </ul>
+            </div>
+            
+            <a href="http://127.0.0.1:8000/firebase-demo.html" class="button success">
+                🔥 Test Firebase Integration
+            </a>
+        </div>
+
+        <div class="card">
+            <h3>🧪 Testing Credentials</h3>
+            <div style="background: #e7f3ff; border: 1px solid #b8daff; border-radius: 8px; padding: 15px;">
+                <h4>Admin Account:</h4>
+                <p><strong>Email:</strong> admin@panenku.com</p>
+                <p><strong>Password:</strong> admin123</p>
+                <p><strong>Role:</strong> admin</p>
+            </div>
+            
+            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                <h4>Demo User Account:</h4>
+                <p><strong>Email:</strong> user@panenku.com</p>
+                <p><strong>Password:</strong> password123</p>
+                <p><strong>Role:</strong> user</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadSwaggerInFrame() {
+            const container = document.getElementById('swagger-container');
+            const frame = document.getElementById('swagger-frame');
+            
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                frame.src = 'http://127.0.0.1:8000/api/documentation';
+                document.querySelector('button[onclick="loadSwaggerInFrame()"]').textContent = '📱 Hide Frame';
+            } else {
+                container.style.display = 'none';
+                frame.src = 'about:blank';
+                document.querySelector('button[onclick="loadSwaggerInFrame()"]').textContent = '📱 Load in Frame';
+            }
+        }
+
+        // Add some dynamic effects
+        window.addEventListener('load', () => {
+            console.log('🚀 Swagger API Documentation loaded!');
+            console.log('📖 Access Swagger UI at: http://127.0.0.1:8000/api/documentation');
+            console.log('🔥 Test Firebase at: http://127.0.0.1:8000/firebase-demo.html');
+        });
+    </script>
+</body>
+</html>
