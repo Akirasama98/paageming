@@ -63,7 +63,7 @@ Route::get('/generate-docs', function () {
             'file_size' => file_exists($jsonPath) ? filesize($jsonPath) : 0,
             'output' => Artisan::output()
         ]);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
