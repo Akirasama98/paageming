@@ -7,21 +7,36 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
     zip \
     unzip \
     sqlite3 \
     libsqlite3-dev \
     nodejs \
-    npm
+    npm \
+    libcurl4-openssl-dev \
+    libssl-dev
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_sqlite mbstring exif pcntl bcmath gd
+# Install PHP extensions (including ones needed for Firebase)
+RUN docker-php-ext-install \
+    pdo_sqlite \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip \
+    curl \
+    json
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Verify Composer installation
+RUN composer --version
 
 # Set working directory
 WORKDIR /var/www
@@ -29,8 +44,11 @@ WORKDIR /var/www
 # Copy composer files first (for better Docker layer caching)
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Debug: Check if files are copied correctly
+RUN ls -la && cat composer.json | head -20
+
+# Install PHP dependencies with verbose output for debugging
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --verbose
 
 # Copy package.json files for Node dependencies
 COPY package*.json ./

@@ -6,7 +6,7 @@ echo "🚀 Starting Render Build Process for Laravel..."
 echo "📦 Installing PHP if not available..."
 if ! command -v php &> /dev/null; then
     echo "Installing PHP..."
-    apt-get update && apt-get install -y php8.2 php8.2-cli php8.2-xml php8.2-curl php8.2-zip php8.2-sqlite3 php8.2-mbstring
+    apt-get update && apt-get install -y php8.2 php8.2-cli php8.2-xml php8.2-curl php8.2-zip php8.2-sqlite3 php8.2-mbstring php8.2-gd php8.2-bcmath
 fi
 
 # Install Composer if not available
@@ -18,9 +18,12 @@ if ! command -v composer &> /dev/null; then
     chmod +x /usr/local/bin/composer
 fi
 
+# Set Composer memory limit
+export COMPOSER_MEMORY_LIMIT=-1
+
 # Install PHP dependencies
 echo "📦 Installing Composer dependencies..."
-composer install --no-dev --optimize-autoloader --no-interaction
+composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --verbose
 
 # Install Node.js dependencies
 echo "📦 Installing NPM dependencies..."
