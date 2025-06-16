@@ -62,12 +62,13 @@ class ProductController extends Controller
      * )
      */
     public function store(Request $request)
-    {
-        $request->validate([
+    {        $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
-        ]);        $product = Product::create($request->all());
+        ]);
+        
+        $product = Product::create($request->all());
 
         // Simpan ke Firebase Realtime Database
         try {

@@ -1,0 +1,82 @@
+FROM php:8.2-cli
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    sqlite3 \
+    libsqlite3-dev \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_sqlite \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        zip
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Create application directory
+WORKDIR /var/www
+
+# Copy composer files
+COPY composer.json composer.lock ./
+
+# Set memory limit for composer
+RUN echo "memory_limit=512M" > /usr/local/etc/php/conf.d/memory-limit.ini
+
+# Install dependencies with more memory and timeout
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --prefer-dist \
+    --no-cache \
+    --verbose
+
+# Copy package.json
+COPY package*.json ./
+
+# Install Node dependencies
+RUN npm ci --only=production
+
+# Copy application
+COPY . .
+
+# Build assets
+RUN npm run build
+
+# Create necessary directories
+RUN mkdir -p storage/logs storage/framework/{sessions,views,cache} bootstrap/cache \
+    && touch database/database.sqlite \
+    && chmod -R 775 storage bootstrap/cache database
+
+# Generate application key
+RUN php artisan key:generate --force
+
+# Run database setup
+RUN php artisan migrate --force \
+    && php artisan db:seed --force
+
+# Generate API documentation
+RUN php artisan l5-swagger:generate
+
+# Expose port
+EXPOSE 8000
+
+# Start application
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

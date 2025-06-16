@@ -9,6 +9,7 @@ use App\Models\Category;
 use Kreait\Firebase\Factory;
 use App\Models\Cart;
 use App\Models\CartItem;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -87,14 +88,19 @@ class CartController extends Controller
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
-            ]);
-        }
+            ]);        }
 
         // Simpan ke Firebase
-        $factory = (new Factory)->withServiceAccount(config('firebase.credentials.file'));
-        $database = $factory->createDatabase();
-        $database->getReference('carts/'.$user->id)
-            ->set($cart->load('items.product')->toArray());
+        try {
+            $factory = (new Factory)->withServiceAccount(config('firebase.credentials.file'))
+                ->withDatabaseUri(config('firebase.database_url'));
+            $database = $factory->createDatabase();
+            $database->getReference('carts/'.$user->id)
+                ->set($cart->load('items.product')->toArray());
+        } catch (\Exception $e) {
+            // Log error tapi tetap return success karena data sudah tersimpan di database
+            Log::error('Firebase sync failed for cart: ' . $e->getMessage());
+        }
 
         return response()->json(['message' => 'Added to cart', 'cart_item' => $cartItem]);
     }
@@ -203,21 +209,25 @@ class CartController extends Controller
 
         // Update status cart menjadi checked_out
         $cart->status = 'checked_out';
-        $cart->save();
+        $cart->save();        // Simpan transaksi ke Firebase
+        try {
+            $factory = (new Factory)->withServiceAccount(config('firebase.credentials.file'))
+                ->withDatabaseUri(config('firebase.database_url'));
+            $database = $factory->createDatabase();
+            $database->getReference('orders/'.$user->id.'/'.time())
+                ->set([
+                    'cart_id' => $cart->id,
+                    'items' => $cart->items->toArray(),
+                    'checkout_at' => now()->toISOString(),
+                    'status' => 'pending'
+                ]);
 
-        // Simpan transaksi ke Firebase
-        $factory = (new Factory)->withServiceAccount(config('firebase.credentials.file'));
-        $database = $factory->createDatabase();
-        $database->getReference('orders/'.$user->id.'/'.time())
-            ->set([
-                'cart_id' => $cart->id,
-                'items' => $cart->items->toArray(),
-                'checkout_at' => now()->toISOString(),
-                'status' => 'pending'
-            ]);
-
-        // Hapus cart dari Firebase (karena sudah checkout)
-        $database->getReference('carts/'.$user->id)->remove();
+            // Hapus cart dari Firebase (karena sudah checkout)
+            $database->getReference('carts/'.$user->id)->remove();
+        } catch (\Exception $e) {
+            // Log error tapi tetap return success karena data sudah tersimpan di database
+            Log::error('Firebase sync failed for checkout: ' . $e->getMessage());
+        }
 
         return response()->json(['message' => 'Checkout successful', 'order_id' => $cart->id]);
     }
