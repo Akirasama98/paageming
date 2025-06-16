@@ -47,7 +47,8 @@ https://github.com/Akirasama98/paageming.git
 4. Configuration:
    - **Build Command**: `chmod +x build.sh && ./build.sh`
    - **Start Command**: `php artisan serve --host=0.0.0.0 --port=$PORT`
-   - **Environment**: PHP
+   
+**⚠️ PENTING**: Render auto-detect environment dari `composer.json`. Jika build fails, pilih "Docker" deployment.
 
 ### **3. Environment Variables di Render**
 Copas environment variables dari `DEPLOY_RENDER.md`:

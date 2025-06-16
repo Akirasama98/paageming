@@ -20,10 +20,11 @@ git push origin main
 
 #### 3. **Konfigurasi Service**
 - **Name**: `paageming-api`
-- **Environment**: `PHP`
 - **Build Command**: `chmod +x build.sh && ./build.sh`
 - **Start Command**: `php artisan serve --host=0.0.0.0 --port=$PORT`
 - **Instance Type**: Free tier
+
+**CATATAN**: Render akan auto-detect environment berdasarkan files (`composer.json` untuk PHP). Jika ada masalah, gunakan Docker deployment dengan `Dockerfile` yang sudah disediakan.
 
 #### 4. **Environment Variables**
 Tambahkan environment variables berikut di Render dashboard:
