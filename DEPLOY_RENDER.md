@@ -39,9 +39,9 @@ DB_CONNECTION=sqlite
 SESSION_DRIVER=database
 CACHE_STORE=database
 QUEUE_CONNECTION=database
-FIREBASE_PROJECT_ID=paageming-marketplace
-FIREBASE_DATABASE_URL=https://paageming-marketplace-default-rtdb.firebaseio.com/
-FIREBASE_STORAGE_BUCKET=paageming-marketplace.appspot.com
+FIREBASE_PROJECT_ID=panenku-cd8ea
+FIREBASE_DATABASE_URL=https://panenku-cd8ea-default-rtdb.firebaseio.com/
+FIREBASE_STORAGE_BUCKET=panenku-cd8ea.appspot.com
 L5_SWAGGER_GENERATE_ALWAYS=true
 ```
 

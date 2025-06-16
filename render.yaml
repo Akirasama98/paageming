@@ -25,12 +25,11 @@ services:
       - key: CACHE_STORE
         value: database
       - key: QUEUE_CONNECTION
-        value: database
-      - key: FIREBASE_PROJECT_ID
-        value: paageming-marketplace
+        value: database      - key: FIREBASE_PROJECT_ID
+        value: panenku-cd8ea
       - key: FIREBASE_DATABASE_URL
-        value: https://paageming-marketplace-default-rtdb.firebaseio.com/
+        value: https://panenku-cd8ea-default-rtdb.firebaseio.com/
       - key: FIREBASE_STORAGE_BUCKET
-        value: paageming-marketplace.appspot.com
+        value: panenku-cd8ea.appspot.com
       - key: L5_SWAGGER_GENERATE_ALWAYS
         value: true

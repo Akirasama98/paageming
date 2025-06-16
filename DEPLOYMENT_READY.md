@@ -56,9 +56,9 @@ APP_NAME=Paageming
 APP_ENV=production
 APP_DEBUG=false
 APP_KEY=[generate via Render atau php artisan key:generate]
-FIREBASE_PROJECT_ID=paageming-marketplace
-FIREBASE_DATABASE_URL=https://paageming-marketplace-default-rtdb.firebaseio.com/
-FIREBASE_STORAGE_BUCKET=paageming-marketplace.appspot.com
+FIREBASE_PROJECT_ID=panenku-cd8ea
+FIREBASE_DATABASE_URL=https://panenku-cd8ea-default-rtdb.firebaseio.com/
+FIREBASE_STORAGE_BUCKET=panenku-cd8ea.appspot.com
 L5_SWAGGER_GENERATE_ALWAYS=true
 ```
 
