@@ -1,10 +1,10 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Panenku API Documentation",
-        "description": "API untuk marketplace hasil pertanian Panenku",
+        "title": "Paageming API Documentation",
+        "description": "API untuk marketplace hasil pertanian Paageming",
         "contact": {
-            "email": "admin@panenku.com"
+            "email": "admin@paageming.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -14,8 +14,8 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000",
-            "description": "Panenku API Development Server"
+            "url": "https://paageming-production.up.railway.app",
+            "description": "Paageming API Production Server"
         }
     ],
     "paths": {
