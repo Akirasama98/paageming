@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Panenku API Documentation",
- *      description="API untuk marketplace hasil pertanian Panenku",
+ *      title="Paageming API Documentation",
+ *      description="API untuk marketplace hasil pertanian Paageming",
  *      @OA\Contact(
- *          email="admin@panenku.com"
+ *          email="admin@paageming.com"
  *      ),
  *      @OA\License(
  *          name="Apache 2.0",
@@ -17,8 +17,8 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Server(
- *      url="http://127.0.0.1:8000",
- *      description="Panenku API Development Server"
+ *      url="https://paageming-production.up.railway.app",
+ *      description="Paageming API Production Server"
  * )
  *
  * @OA\SecurityScheme(
