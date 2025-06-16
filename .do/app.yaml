@@ -1,0 +1,31 @@
+name: paageming-api
+region: fra
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: Akirasama98/paageming
+    branch: main
+    deploy_on_push: true
+  build_command: chmod +x build.sh && ./build.sh
+  run_command: php artisan serve --host=0.0.0.0 --port=$PORT
+  environment_slug: php
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  routes:
+  - path: /
+  envs:
+  - key: APP_NAME
+    value: Paageming
+  - key: APP_ENV
+    value: production
+  - key: APP_DEBUG
+    value: "false"
+  - key: FIREBASE_PROJECT_ID
+    value: panenku-cd8ea
+  - key: FIREBASE_DATABASE_URL
+    value: https://panenku-cd8ea-default-rtdb.firebaseio.com/
+  - key: FIREBASE_STORAGE_BUCKET
+    value: panenku-cd8ea.appspot.com
+  - key: L5_SWAGGER_GENERATE_ALWAYS
+    value: "true"

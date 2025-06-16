@@ -1,0 +1,37 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.php",
+      "use": "@vercel/php"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/public/index.php"
+    },
+    {
+      "src": "/(.*\\.(css|js|ico|png|jpg|jpeg|gif|svg))",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/index.php"
+    }
+  ],
+  "env": {
+    "APP_NAME": "Paageming",
+    "APP_ENV": "production", 
+    "APP_DEBUG": "false",
+    "FIREBASE_PROJECT_ID": "panenku-cd8ea",
+    "FIREBASE_DATABASE_URL": "https://panenku-cd8ea-default-rtdb.firebaseio.com/",
+    "FIREBASE_STORAGE_BUCKET": "panenku-cd8ea.appspot.com",
+    "L5_SWAGGER_GENERATE_ALWAYS": "true"
+  },
+  "functions": {
+    "public/index.php": {
+      "runtime": "vercel-php@0.6.0"
+    }
+  }
+}

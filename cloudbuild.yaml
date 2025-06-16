@@ -1,0 +1,32 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/paageming-api:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/paageming-api:latest',
+      '.'
+    ]
+  
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/paageming-api:$COMMIT_SHA']
+  
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/paageming-api:latest']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: [
+      'run', 'deploy', 'paageming-api',
+      '--image', 'gcr.io/$PROJECT_ID/paageming-api:$COMMIT_SHA',
+      '--region', 'us-central1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--port', '8080',
+      '--set-env-vars', 'APP_NAME=Paageming,APP_ENV=production,APP_DEBUG=false,FIREBASE_PROJECT_ID=panenku-cd8ea,FIREBASE_DATABASE_URL=https://panenku-cd8ea-default-rtdb.firebaseio.com/,FIREBASE_STORAGE_BUCKET=panenku-cd8ea.appspot.com,L5_SWAGGER_GENERATE_ALWAYS=true'
+    ]
+
+images:
+  - 'gcr.io/$PROJECT_ID/paageming-api:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/paageming-api:latest'
