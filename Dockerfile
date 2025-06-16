@@ -26,24 +26,39 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy application
-COPY . .
+# Copy composer files first (for better Docker layer caching)
+COPY composer.json composer.lock ./
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# Install Node dependencies and build assets
-RUN npm ci && npm run build
+# Copy package.json files for Node dependencies
+COPY package*.json ./
+
+# Install Node dependencies
+RUN npm ci
+
+# Copy the rest of the application
+COPY . .
+
+# Build assets
+RUN npm run build
+
+# Create necessary directories
+RUN mkdir -p storage/logs storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache
 
 # Create SQLite database
 RUN touch database/database.sqlite
 
 # Set permissions
 RUN chmod -R 755 storage bootstrap/cache
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache database/database.sqlite
 
 # Generate app key
 RUN php artisan key:generate --force
+
+# Clear config cache before migrations
+RUN php artisan config:clear
 
 # Run migrations and seeders
 RUN php artisan migrate --force

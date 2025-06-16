@@ -1,0 +1,46 @@
+# Ignore development files
+node_modules
+vendor
+.git
+.gitignore
+.gitattributes
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore build artifacts
+public/build
+public/hot
+
+# Ignore storage and cache
+storage/app/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+
+# Ignore database
+database/database.sqlite
+
+# Ignore documentation
+README.md
+*.md
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore test files
+tests/
+phpunit.xml
+
+# Ignore package lock files (we copy them separately)
+package-lock.json
