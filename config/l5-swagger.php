@@ -19,6 +19,11 @@ return [
                  * Edit to include full URL in ui for assets
                  */
                 'use_absolute_path' => env('L5_SWAGGER_USE_ABSOLUTE_PATH', true),
+                
+                /*
+                 * Absolute path to generated json file
+                 */
+                'docs_json_path' => env('L5_SWAGGER_DOCS_JSON_PATH', 'docs'),
 
                 /*
                 * Edit to set path where swagger ui assets should be stored
