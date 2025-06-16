@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Starting Render Build Process for Laravel..."
+echo "🚀 Building Paageming API for Railway..."
 
 # Install PHP via package manager if needed
 echo "📦 Installing PHP if not available..."
@@ -22,28 +22,28 @@ fi
 export COMPOSER_MEMORY_LIMIT=-1
 
 # Install PHP dependencies
-echo "📦 Installing Composer dependencies..."
+echo "📦 Installing API dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --verbose
 
-# Install Node.js dependencies
+# Install Node.js dependencies for asset building
 echo "📦 Installing NPM dependencies..."
 npm ci
 
-# Build assets
+# Build assets (minimal for API)
 echo "🏗️ Building assets..."
 npm run build
 
-# Generate application key if not exists
+# Generate application key
 echo "🔑 Generating application key..."
 php artisan key:generate --force
 
-# Clear and cache config
-echo "⚙️ Optimizing configuration..."
+# Optimize Laravel for production
+echo "⚙️ Optimizing Laravel..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# Create SQLite database if not exists
+# Create SQLite database
 echo "🗄️ Creating SQLite database..."
 touch database/database.sqlite
 
@@ -51,11 +51,11 @@ touch database/database.sqlite
 echo "🗄️ Running database migrations..."
 php artisan migrate --force
 
-# Seed database if needed
+# Seed database with admin user
 echo "🌱 Seeding database..."
 php artisan db:seed --force
 
-# Generate Swagger documentation
+# Generate API documentation
 echo "📚 Generating API documentation..."
 php artisan l5-swagger:generate
 
@@ -63,4 +63,4 @@ php artisan l5-swagger:generate
 echo "🔐 Setting file permissions..."
 chmod -R 755 storage bootstrap/cache
 
-echo "✅ Build process completed successfully!"
+echo "✅ Paageming API build completed successfully!"
