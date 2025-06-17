@@ -20,15 +20,15 @@ Route::get('/', function () {
     ]);
 });
 
-// Route untuk serve api-docs.json secara langsung
+// Serve api-docs.json secara langsung (untuk Swagger UI di Railway)
 Route::get('/docs/api-docs.json', function () {
     $filePath = storage_path('api-docs/api-docs.json');
-    
     if (!file_exists($filePath)) {
         return response()->json(['error' => 'API documentation not found'], 404);
     }
-    
-    return response()->json(json_decode(file_get_contents($filePath), true));
+    return response()->file($filePath, [
+        'Content-Type' => 'application/json'
+    ]);
 });
 
 // Route debug untuk cek status Swagger
