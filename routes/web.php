@@ -38,20 +38,27 @@ Route::get('/debug/swagger', function () {
     $jsonPath = storage_path('api-docs/api-docs.json');
     
     return response()->json([
+        'status' => 'debug route working',
         'config_exists' => file_exists($configPath),
-        'storage_path_exists' => is_dir($storagePath),
+        'storage_exists' => is_dir($storagePath),
         'storage_writable' => is_writable($storagePath),
-        'json_file_exists' => file_exists($jsonPath),
-        'json_file_size' => file_exists($jsonPath) ? filesize($jsonPath) : 0,
-        'storage_contents' => is_dir($storagePath) ? scandir($storagePath) : [],
+        'json_exists' => file_exists($jsonPath),
+        'json_size' => file_exists($jsonPath) ? filesize($jsonPath) : 0,
         'php_version' => PHP_VERSION,
         'laravel_version' => app()->version(),
+        'environment' => app()->environment(),
+        'app_url' => config('app.url'),
     ]);
 });
 
 // Route untuk regenerate Swagger docs
 Route::get('/generate-docs', function () {
     try {
+        // Clear cache first
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        
+        // Generate swagger docs
         Artisan::call('l5-swagger:generate');
         
         $jsonPath = storage_path('api-docs/api-docs.json');
@@ -61,6 +68,29 @@ Route::get('/generate-docs', function () {
             'message' => 'Swagger docs generated successfully',
             'file_exists' => file_exists($jsonPath),
             'file_size' => file_exists($jsonPath) ? filesize($jsonPath) : 0,
+            'output' => Artisan::output(),
+            'timestamp' => now()->toDateTimeString(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
+    }
+});
+
+// Route untuk publish swagger assets
+Route::get('/publish-swagger-assets', function () {
+    try {
+        Artisan::call('vendor:publish', [
+            '--provider' => 'L5Swagger\L5SwaggerServiceProvider',
+            '--tag' => 'swagger-ui-assets'
+        ]);
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Swagger assets published successfully',
             'output' => Artisan::output()
         ]);
     } catch (\Exception $e) {
