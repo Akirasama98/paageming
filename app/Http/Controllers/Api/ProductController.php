@@ -4,13 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use Kreait\Firebase\Factory;
 use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-    /**
+    private $database;
+    
+    public function __construct()
+    {
+        $factory = (new Factory)
+            ->withServiceAccount(config('firebase.credentials.file'))
+            ->withDatabaseUri(config('firebase.database_url'));
+        $this->database = $factory->createDatabase();    }    /**
      * @OA\Get(
      *     path="/api/products",
      *     tags={"Products"},
@@ -30,11 +36,31 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::query();
-        if ($request->has('category')) {
-            $query->where('category_id', $request->category);
+        try {
+            $products = $this->database->getReference('products')->getValue() ?? [];
+            
+            // Convert Firebase object to array with proper structure
+            $productList = [];
+            foreach ($products as $id => $product) {
+                if (is_array($product)) {
+                    $product['id'] = $id;
+                    $productList[] = $product;
+                }
+            }
+            
+            // Filter by category if requested
+            if ($request->has('category')) {
+                $categoryId = $request->get('category');
+                $productList = array_filter($productList, function($product) use ($categoryId) {
+                    return isset($product['category_id']) && $product['category_id'] == $categoryId;
+                });
+            }
+            
+            return response()->json(array_values($productList));
+        } catch (\Exception $e) {
+            Log::error('Firebase get products error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch products'], 500);
         }
-        return response()->json($query->get());
     }
 
     /**
@@ -60,30 +86,42 @@ class ProductController extends Controller
      *         description="Produk berhasil ditambah"
      *     )
      * )
-     */
-    public function store(Request $request)
-    {        $request->validate([
+     */    public function store(Request $request)
+    {
+        $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => 'required|integer',
+            'stock' => 'integer|min:0',
+            'description' => 'string'
         ]);
         
-        $product = Product::create($request->all());
-
-        // Simpan ke Firebase Realtime Database
         try {
-            $factory = (new Factory)
-                ->withServiceAccount(config('firebase.credentials.file'))
-                ->withDatabaseUri(config('firebase.database_url'));
-            $database = $factory->createDatabase();
-            $database->getReference('products/'.$product->id)
-                ->set($product->toArray());
+            // Generate new ID
+            $newProductRef = $this->database->getReference('products')->push();
+            $productId = $newProductRef->getKey();
+            
+            // Prepare product data
+            $productData = [
+                'id' => $productId,
+                'name' => $request->name,
+                'description' => $request->description ?? '',
+                'price' => (int) $request->price,
+                'stock' => (int) ($request->stock ?? 0),
+                'category_id' => (int) $request->category_id,
+                'image_url' => $request->image_url ?? null,
+                'created_at' => now()->toISOString(),
+                'updated_at' => now()->toISOString()
+            ];
+            
+            // Save to Firebase
+            $newProductRef->set($productData);
+            
+            return response()->json($productData, 201);
         } catch (\Exception $e) {
-            // Log error tapi tetap return success karena data sudah tersimpan di MySQL
-            Log::error('Firebase sync failed: ' . $e->getMessage());
+            Log::error('Firebase create product error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create product'], 500);
         }
-
-        return response()->json($product, 201);
     }
 
     /**
@@ -102,10 +140,21 @@ class ProductController extends Controller
      *         description="Detail produk"
      *     )
      * )
-     */
-    public function show(Product $product)
+     */    public function show($id)
     {
-        return response()->json($product);
+        try {
+            $product = $this->database->getReference('products/' . $id)->getValue();
+            
+            if (!$product) {
+                return response()->json(['error' => 'Product not found'], 404);
+            }
+            
+            $product['id'] = $id;
+            return response()->json($product);
+        } catch (\Exception $e) {
+            Log::error('Firebase get product error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch product'], 500);
+        }
     }
 
     /**
@@ -136,11 +185,49 @@ class ProductController extends Controller
      *         description="Produk berhasil diupdate"
      *     )
      * )
-     */
-    public function update(Request $request, Product $product)
+     */    public function update(Request $request, $id)
     {
-        $product->update($request->all());
-        return response()->json($product);
+        try {
+            // Check if product exists
+            $existingProduct = $this->database->getReference('products/' . $id)->getValue();
+            if (!$existingProduct) {
+                return response()->json(['error' => 'Product not found'], 404);
+            }
+            
+            // Validate request
+            $request->validate([
+                'name' => 'string|max:255',
+                'price' => 'numeric',
+                'category_id' => 'integer',
+                'stock' => 'integer|min:0',
+                'description' => 'string'
+            ]);
+            
+            // Prepare updated data
+            $updateData = array_filter([
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price ? (int) $request->price : null,
+                'stock' => $request->has('stock') ? (int) $request->stock : null,
+                'category_id' => $request->category_id ? (int) $request->category_id : null,
+                'image_url' => $request->image_url,
+                'updated_at' => now()->toISOString()
+            ], function($value) {
+                return $value !== null;
+            });
+            
+            // Update in Firebase
+            $this->database->getReference('products/' . $id)->update($updateData);
+            
+            // Get updated product
+            $updatedProduct = $this->database->getReference('products/' . $id)->getValue();
+            $updatedProduct['id'] = $id;
+            
+            return response()->json($updatedProduct);
+        } catch (\Exception $e) {
+            Log::error('Firebase update product error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to update product'], 500);
+        }
     }
 
     /**
@@ -160,10 +247,22 @@ class ProductController extends Controller
      *         description="Produk berhasil dihapus"
      *     )
      * )
-     */
-    public function destroy(Product $product)
+     */    public function destroy($id)
     {
-        $product->delete();
-        return response()->json(null, 204);
+        try {
+            // Check if product exists
+            $existingProduct = $this->database->getReference('products/' . $id)->getValue();
+            if (!$existingProduct) {
+                return response()->json(['error' => 'Product not found'], 404);
+            }
+            
+            // Delete from Firebase
+            $this->database->getReference('products/' . $id)->remove();
+            
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            Log::error('Firebase delete product error: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete product'], 500);
+        }
     }
 }
