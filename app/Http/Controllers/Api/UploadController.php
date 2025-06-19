@@ -43,16 +43,36 @@ class UploadController extends Controller
      */
     public function uploadImage(Request $request)
     {
+        // Enhanced validation with security checks
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120' // Max 5MB
         ]);
 
         $image = $request->file('image');
-        $imageName = time() . '_' . $image->getClientOriginalName();
+        
+        // Security checks
+        if (!$image->isValid()) {
+            return response()->json(['message' => 'Invalid file upload'], 400);
+        }
+
+        // Check actual file type (not just extension)
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($finfo, $image->getPathname());
+        finfo_close($finfo);
+        
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+        if (!in_array($mimeType, $allowedMimes)) {
+            return response()->json(['message' => 'Invalid file type'], 400);
+        }
+
+        // Generate secure filename
+        $extension = $image->getClientOriginalExtension();
+        $imageName = 'img_' . time() . '_' . bin2hex(random_bytes(8)) . '.' . $extension;
         
         // Store locally first
         $path = $image->storeAs('images', $imageName, 'public');
-          try {
+        
+        try {
             // Upload to Firebase Storage
             $factory = (new Factory)
                 ->withServiceAccount(config('firebase.credentials.file'));
@@ -62,7 +82,14 @@ class UploadController extends Controller
             $firebaseStoragePath = 'images/' . $imageName;
             $bucket->upload(
                 fopen(storage_path('app/public/' . $path), 'r'),
-                ['name' => $firebaseStoragePath]
+                [
+                    'name' => $firebaseStoragePath,
+                    'metadata' => [
+                        'contentType' => $mimeType,
+                        'uploadedBy' => 'paageming-api',
+                        'uploadedAt' => date('Y-m-d H:i:s')
+                    ]
+                ]
             );
             
             // Get public URL
@@ -75,15 +102,19 @@ class UploadController extends Controller
                 $firebaseStoragePath
             );
             
-            // Delete local file
+            // Delete local file (cleanup)
             Storage::disk('public')->delete($path);
             
             return response()->json([
                 'image_url' => $imageUrl,
-                'message' => 'Image uploaded successfully'
+                'message' => 'Image uploaded successfully',
+                'filename' => $imageName
             ]);
             
         } catch (\Exception $e) {
+            // Cleanup local file on error
+            Storage::disk('public')->delete($path);
+            
             return response()->json([
                 'message' => 'Failed to upload image: ' . $e->getMessage()
             ], 500);

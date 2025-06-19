@@ -31,6 +31,17 @@ Route::get('/docs/api-docs.json', function () {
     ]);
 });
 
+// Alias for L5 Swagger UI default docs path
+Route::get('/api/documentation/docs', function () {
+    $filePath = storage_path('api-docs/api-docs.json');
+    if (!file_exists($filePath)) {
+        return response()->json(['error' => 'API documentation not found'], 404);
+    }
+    return response()->file($filePath, [
+        'Content-Type' => 'application/json'
+    ]);
+});
+
 // Route debug untuk cek status Swagger
 Route::get('/debug/swagger', function () {
     $configPath = config_path('l5-swagger.php');

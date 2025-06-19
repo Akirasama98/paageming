@@ -17,8 +17,8 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Server(
- *      url="https://paageming-production.up.railway.app",
- *      description="Paageming API Production Server"
+ *      url=L5_SWAGGER_CONST_HOST,
+ *      description="Paageming API Server"
  * )
  *
  * @OA\SecurityScheme(

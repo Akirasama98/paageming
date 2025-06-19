@@ -1,0 +1,112 @@
+// Paageming Core Database Schema for dbdiagram.io
+// Current Implementation (Firebase + Laravel)
+// Copy and paste this code to https://dbdiagram.io/d
+
+Table users {
+  id varchar(36) [primary key, note: 'Firebase key or UUID']
+  name varchar(255) [not null, note: 'User full name']
+  email varchar(255) [unique, not null, note: 'User email address']
+  role enum('admin', 'user') [default: 'user', note: 'User role for authorization']
+  created_at timestamp [default: `now()`, note: 'Record creation time']
+  updated_at timestamp [default: `now()`, note: 'Record update time']
+  
+  note: 'System users - currently hardcoded in AuthController'
+}
+
+Table categories {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  name varchar(255) [not null, note: 'Category name (e.g., Sayuran, Buah-buahan)']
+  description text [null, note: 'Category description']
+  created_at timestamp [default: `now()`, note: 'Firebase timestamp']
+  updated_at timestamp [default: `now()`, note: 'Firebase timestamp']
+  
+  note: 'Product categories - stored in Firebase Realtime DB'
+}
+
+Table products {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  category_id varchar(36) [not null, ref: > categories.id, note: 'Reference to category']
+  name varchar(255) [not null, note: 'Product name (e.g., Kangkung Segar)']
+  description text [null, note: 'Product description']
+  price decimal(10,2) [not null, note: 'Product price in IDR']
+  stock integer [not null, default: 0, note: 'Available stock quantity']
+  image_url varchar(500) [null, note: 'Product image URL from Firebase Storage']
+  status enum('active', 'inactive') [default: 'active', note: 'Product availability status']
+  created_at timestamp [default: `now()`, note: 'Firebase timestamp']
+  updated_at timestamp [default: `now()`, note: 'Firebase timestamp']
+  
+  note: 'Agricultural products - stored in Firebase Realtime DB'
+}
+
+// Future Implementation Tables (planned)
+Table carts {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  user_id varchar(36) [not null, ref: > users.id]
+  status enum('active', 'checkout') [default: 'active']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: 'Shopping carts - planned for future implementation'
+}
+
+Table cart_items {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  cart_id varchar(36) [not null, ref: > carts.id]
+  product_id varchar(36) [not null, ref: > products.id]
+  quantity integer [not null, note: 'Item quantity']
+  price_at_time decimal(10,2) [not null, note: 'Price when added to cart']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: 'Cart items - planned for future implementation'
+}
+
+Table orders {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  user_id varchar(36) [not null, ref: > users.id]
+  total_amount decimal(12,2) [not null, note: 'Total order amount']
+  status enum('pending', 'processing', 'shipped', 'delivered', 'cancelled') [default: 'pending']
+  shipping_address text [not null]
+  payment_method enum('cash', 'transfer', 'ewallet') [not null]
+  payment_status enum('pending', 'paid', 'failed') [default: 'pending']
+  notes text [null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: 'Customer orders - planned for future implementation'
+}
+
+Table order_items {
+  id varchar(36) [primary key, note: 'Firebase generated key']
+  order_id varchar(36) [not null, ref: > orders.id]
+  product_id varchar(36) [not null, ref: > products.id]
+  quantity integer [not null]
+  price_at_time decimal(10,2) [not null]
+  subtotal decimal(10,2) [not null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: 'Order items - planned for future implementation'
+}
+
+// Implementation Status Notes:
+// ✅ IMPLEMENTED:
+// - users (hardcoded in AuthController)
+// - categories (Firebase CRUD complete)
+// - products (Firebase CRUD complete)
+//
+// ⏳ PLANNED:
+// - carts & cart_items (shopping cart functionality)
+// - orders & order_items (order management)
+//
+// 🔥 FIREBASE STRUCTURE:
+// {
+//   "categories": {
+//     "cat1": { "name": "Sayuran", "description": "...", ... },
+//     "cat2": { "name": "Buah-buahan", "description": "...", ... }
+//   },
+//   "products": {
+//     "prod1": { "category_id": "cat1", "name": "Kangkung", ... },
+//     "prod2": { "category_id": "cat1", "name": "Bayam", ... }
+//   }
+// }

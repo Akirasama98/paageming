@@ -26,7 +26,7 @@ class ProductController extends Controller
      *         in="query",
      *         description="Filter produk berdasarkan kategori",
      *         required=false,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -88,18 +88,29 @@ class ProductController extends Controller
      * )
      */    public function store(Request $request)
     {
+        // Cek role admin dari token
+        $authHeader = $request->header('Authorization');
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $token = substr($authHeader, 7);
+        $payload = json_decode(base64_decode($token), true);
+        if (!isset($payload['role']) || $payload['role'] !== 'admin') {
+            return response()->json(['error' => 'Forbidden: admin only'], 403);
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric',
-            'category_id' => 'required|integer',
+            'category_id' => 'required', // Tidak dipaksa integer
             'stock' => 'integer|min:0',
             'description' => 'string'
         ]);
         
         try {
-            // Generate new ID
-            $newProductRef = $this->database->getReference('products')->push();
-            $productId = $newProductRef->getKey();
+            // Generate new string ID (misal: prod_{timestamp}_{rand})
+            $productId = 'prod_' . time() . '_' . rand(1000,9999);
+            $newProductRef = $this->database->getReference('products/' . $productId);
             
             // Prepare product data
             $productData = [
@@ -108,10 +119,10 @@ class ProductController extends Controller
                 'description' => $request->description ?? '',
                 'price' => (int) $request->price,
                 'stock' => (int) ($request->stock ?? 0),
-                'category_id' => (int) $request->category_id,
+                'category_id' => $request->category_id, // Bisa string atau int
                 'image_url' => $request->image_url ?? null,
-                'created_at' => now()->toISOString(),
-                'updated_at' => now()->toISOString()
+                'created_at' => now()->toIso8601String(),
+                'updated_at' => now()->toIso8601String()
             ];
             
             // Save to Firebase
@@ -133,7 +144,7 @@ class ProductController extends Controller
      *         name="product",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -167,7 +178,7 @@ class ProductController extends Controller
      *         name="product",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
@@ -176,7 +187,7 @@ class ProductController extends Controller
      *             @OA\Property(property="description", type="string"),
      *             @OA\Property(property="price", type="number"),
      *             @OA\Property(property="stock", type="integer"),
-     *             @OA\Property(property="category_id", type="integer"),
+     *             @OA\Property(property="category_id", type="string"),
      *             @OA\Property(property="image_url", type="string")
      *         )
      *     ),
@@ -187,6 +198,17 @@ class ProductController extends Controller
      * )
      */    public function update(Request $request, $id)
     {
+        // Cek role admin dari token
+        $authHeader = $request->header('Authorization');
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $token = substr($authHeader, 7);
+        $payload = json_decode(base64_decode($token), true);
+        if (!isset($payload['role']) || $payload['role'] !== 'admin') {
+            return response()->json(['error' => 'Forbidden: admin only'], 403);
+        }
+        
         try {
             // Check if product exists
             $existingProduct = $this->database->getReference('products/' . $id)->getValue();
@@ -198,7 +220,7 @@ class ProductController extends Controller
             $request->validate([
                 'name' => 'string|max:255',
                 'price' => 'numeric',
-                'category_id' => 'integer',
+                'category_id' => 'string', // Boleh string
                 'stock' => 'integer|min:0',
                 'description' => 'string'
             ]);
@@ -209,9 +231,9 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'price' => $request->price ? (int) $request->price : null,
                 'stock' => $request->has('stock') ? (int) $request->stock : null,
-                'category_id' => $request->category_id ? (int) $request->category_id : null,
+                'category_id' => $request->category_id ?? null, // Tidak di-cast ke int
                 'image_url' => $request->image_url,
-                'updated_at' => now()->toISOString()
+                'updated_at' => now()->toIso8601String()
             ], function($value) {
                 return $value !== null;
             });
@@ -240,7 +262,7 @@ class ProductController extends Controller
      *         name="product",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=204,
@@ -249,6 +271,17 @@ class ProductController extends Controller
      * )
      */    public function destroy($id)
     {
+        // Cek role admin dari token
+        $authHeader = request()->header('Authorization');
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $token = substr($authHeader, 7);
+        $payload = json_decode(base64_decode($token), true);
+        if (!isset($payload['role']) || $payload['role'] !== 'admin') {
+            return response()->json(['error' => 'Forbidden: admin only'], 403);
+        }
+        
         try {
             // Check if product exists
             $existingProduct = $this->database->getReference('products/' . $id)->getValue();

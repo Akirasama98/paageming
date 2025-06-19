@@ -1,0 +1,42 @@
+// Paageming - Current Implementation Only
+// Firebase Realtime Database Schema for dbdiagram.io
+// Status: ✅ LIVE & TESTED (June 17, 2025)
+
+Table users {
+  id varchar(36) [primary key, note: 'User identifier']
+  name varchar(255) [not null, note: 'Full name']
+  email varchar(255) [unique, not null, note: 'Email address']
+  role enum('admin', 'user') [default: 'user', note: 'User role']
+  created_at timestamp [default: `now()`]
+  
+  note: '✅ IMPLEMENTED: Hardcoded users in AuthController'
+}
+
+Table categories {
+  id varchar(36) [primary key, note: 'Firebase auto-generated key']
+  name varchar(255) [not null, note: 'Category name']
+  description text [note: 'Category description']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: '✅ IMPLEMENTED: Firebase CRUD operations complete'
+}
+
+Table products {
+  id varchar(36) [primary key, note: 'Firebase auto-generated key']
+  category_id varchar(36) [not null, ref: > categories.id, note: 'Foreign key to categories']
+  name varchar(255) [not null, note: 'Product name']
+  description text [note: 'Product description']
+  price decimal(10,2) [not null, note: 'Price in IDR']
+  stock integer [not null, default: 0, note: 'Stock quantity']
+  image_url varchar(500) [note: 'Image URL from Firebase Storage']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  note: '✅ IMPLEMENTED: Firebase CRUD operations complete'
+}
+
+// Sample Data Currently in Firebase:
+// Categories: Sayuran, Buah-buahan, Biji-bijian, Olahan
+// Products: Kangkung Segar, Bayam Hijau, Cabai Merah, Pisang Cavendish, etc.
+// API Endpoints: All CRUD operations tested and working

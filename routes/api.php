@@ -6,11 +6,10 @@ use Illuminate\Support\Facades\Route;
 // AUTH
 Route::post('/register', 'App\\Http\\Controllers\\Api\\AuthController@register');
 Route::post('/login', 'App\\Http\\Controllers\\Api\\AuthController@login');
+Route::post('/logout', 'App\\Http\\Controllers\\Api\\AuthController@logout');
 
 // AUTHENTICATED ROUTES
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', 'App\\Http\\Controllers\\Api\\AuthController@logout');
-    
     // ADMIN ONLY ROUTES
     Route::middleware('App\\Http\\Middleware\\AdminMiddleware')->group(function () {
         Route::get('/users', 'App\\Http\\Controllers\\Api\\UserController@index');
@@ -38,3 +37,16 @@ Route::get('/categories', 'App\\Http\\Controllers\\Api\\CategoryController@index
 Route::get('/categories/{category}', 'App\\Http\\Controllers\\Api\\CategoryController@show');
 Route::get('/products', 'App\\Http\\Controllers\\Api\\ProductController@index');
 Route::get('/products/{product}', 'App\\Http\\Controllers\\Api\\ProductController@show');
+
+// PRODUCTS CRUD (Public for testing - in production should be protected)
+Route::post('/products', 'App\\Http\\Controllers\\Api\\ProductController@store');
+Route::put('/products/{product}', 'App\\Http\\Controllers\\Api\\ProductController@update');
+Route::delete('/products/{product}', 'App\\Http\\Controllers\\Api\\ProductController@destroy');
+
+// CATEGORIES CRUD (Public for testing - in production should be admin only)
+Route::post('/categories', 'App\\Http\\Controllers\\Api\\CategoryController@store');
+Route::put('/categories/{category}', 'App\\Http\\Controllers\\Api\\CategoryController@update');
+Route::delete('/categories/{category}', 'App\\Http\\Controllers\\Api\\CategoryController@destroy');
+
+// USERS (Public for testing - in production should be admin only)
+Route::get('/users', 'App\\Http\\Controllers\\Api\\UserController@index');

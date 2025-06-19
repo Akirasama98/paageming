@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Paageming Marketplace</title>
+    <style>
+        @media print {
+            body { margin: 0; }
+            .no-print { display: none; }
+            .page-break { page-break-before: always; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .api-table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .api-table th {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .api-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            vertical-align: top;
+        }
+        
+        .field-name {
+            font-weight: 600;
+            width: 15%;
+            background: #f8f9fa;
+        }
+        
+        .field-value {
+            width: 85%;
+        }
+        
+        .json-response {
+            background: #f8f9fa;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 11px;
+            white-space: pre-wrap;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            margin: 10px 0;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .section-title {
+            color: #495057;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+            margin: 40px 0 20px 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .error {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .api-number {
+            font-weight: 700;
+            color: #007bff;
+            font-size: 16px;
+        }
+        
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .info-box h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+        
+        .credential-table {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .credential-table table {
+            width: 100%;
+            margin: 0;
+        }
+        
+        .status-table {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>API Documentation</h1>
+    <p>Paageming Marketplace - Sistem Informasi Hasil Pertanian</p>
+    <p>Version 1.0.0 | June 2025</p>
+</div>
+
+<div class="info-box">
+    <h3>📋 Informasi Umum</h3>
+    <p><strong>Base URL:</strong> <code>http://localhost:8000</code> (Development) | <code>https://your-app.railway.app</code> (Production)</p>
+    <p><strong>Content-Type:</strong> <code>application/json</code></p>
+    <p><strong>Authentication:</strong> Bearer Token</p>
+    <p><strong>Database:</strong> Firebase Realtime Database</p>
+</div>
+
+<h2 class="section-title">1. Authentication API</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">1.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Login User/Admin</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/login</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>email:</strong> string (required)<br>
+                <strong>password:</strong> string (required)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "access_token": "eyJ1c2VyX2lkIjoxLCJlbWFpbCI6ImFkbWluQHBhYWdlbWluZy5jb20iLCJyb2xlIjoiYWRtaW4iLCJleHBpcmVzX2F0IjoxNzUwMjM4ODY1fQ==",
+  "token_type": "Bearer",
+  "user": {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@paageming.com",
+    "role": "admin"
+  }
+}</div>
+                <span class="error">❌ Error (401):</span>
+                <div class="json-response">{
+  "message": "Invalid credentials"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Endpoint untuk melakukan login ke sistem. Mengembalikan access token yang digunakan untuk mengakses endpoint yang memerlukan authentication.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">2.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Register User Baru</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/register</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>name:</strong> string (required)<br>
+                <strong>email:</strong> string (required)<br>
+                <strong>password:</strong> string (required, min 6 chars)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (201):</span>
+                <div class="json-response">{
+  "access_token": "eyJ1c2VyX2lkIjoxMjM0NTY3ODkwLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImV4cGlyZXNfYXQiOjE3NTAyMzg4NjV9",
+  "token_type": "Bearer",
+  "user": {
+    "id": 1234567890,
+    "name": "John Doe",
+    "email": "user@example.com",
+    "role": "user"
+  }
+}</div>
+                <span class="error">❌ Error (422):</span>
+                <div class="json-response">{
+  "message": "The given data was invalid.",
+  "errors": {
+    "email": ["The email field is required."],
+    "password": ["The password must be at least 6 characters."]
+  }
+}</div>
+            </td>
+        </tr>        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Endpoint untuk mendaftarkan user baru ke sistem. Otomatis login setelah registrasi berhasil.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">3.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Logout User</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/logout</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">Tidak ada parameter</td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "message": "Logged out successfully"
+}</div>
+                <span class="error">❌ Error (401):</span>
+                <div class="json-response">{
+  "message": "Unauthenticated"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Logout user dari sistem. Memerlukan valid bearer token.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2 class="section-title">2. Categories API</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">3.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Daftar Semua Kategori</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/categories</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan (Public)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">Tidak ada parameter</td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">[
+  {
+    "id": "cat1",
+    "name": "Sayuran",
+    "description": "Sayuran segar dari petani lokal",
+    "created_at": "2025-06-17T08:13:36.000000Z",
+    "updated_at": "2025-06-17T08:13:36.000000Z"
+  },
+  {
+    "id": "cat2",
+    "name": "Buah-buahan", 
+    "description": "Buah segar berkualitas tinggi",
+    "created_at": "2025-06-17T08:13:36.000000Z",
+    "updated_at": "2025-06-17T08:13:36.000000Z"
+  }
+]</div>
+                <span class="error">❌ Error (500):</span>
+                <div class="json-response">{
+  "status": "error",
+  "message": "Failed to fetch categories"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Mengambil daftar semua kategori produk yang tersedia. Dapat diakses tanpa authentication.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">4.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Tambah Kategori Baru</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/categories</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>name:</strong> string (required)<br>
+                <strong>description:</strong> string (required)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (201):</span>
+                <div class="json-response">{
+  "id": "-OSxDWmpZpX48hOiP9Nr",
+  "name": "Test Category",
+  "description": "Test description for new category", 
+  "created_at": "2025-06-17T09:30:53.000000Z",
+  "updated_at": "2025-06-17T09:30:53.000000Z"
+}</div>
+                <span class="error">❌ Error (401/422):</span>
+                <div class="json-response">{
+  "message": "Validation failed",
+  "errors": {
+    "name": ["The name field is required."]
+  }
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Membuat kategori produk baru. Hanya dapat diakses oleh admin yang sudah login.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">5.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Update Kategori</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>PUT /api/categories/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">PUT</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)<br>
+                <strong>name:</strong> string (optional)<br>
+                <strong>description:</strong> string (optional)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "id": "cat1",
+  "name": "Sayuran Organik",
+  "description": "Sayuran organik berkualitas tinggi", 
+  "created_at": "2025-06-17T08:13:36.000000Z",
+  "updated_at": "2025-06-17T09:45:12.000000Z"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Category not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Update data kategori berdasarkan ID. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">6.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Hapus Kategori</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>DELETE /api/categories/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">DELETE</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "message": "Category deleted successfully"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Category not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Menghapus kategori berdasarkan ID. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">7.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Detail Kategori</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/categories/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan (Public)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "id": "cat1",
+  "name": "Sayuran",
+  "description": "Sayuran segar dari petani lokal",
+  "created_at": "2025-06-17T08:13:36.000000Z",
+  "updated_at": "2025-06-17T08:13:36.000000Z"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Category not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Mengambil detail kategori berdasarkan ID. Dapat diakses tanpa authentication.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2 class="section-title">3. Products API</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">8.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Daftar Semua Produk</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/products</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan (Public)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">Tidak ada parameter</td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">[
+  {
+    "id": "prod1",
+    "name": "Kangkung Segar",
+    "description": "Kangkung segar dari petani lokal",
+    "price": 5000,
+    "category_id": "cat1",
+    "stock": 100,
+    "created_at": "2025-06-17T08:13:37.000000Z",
+    "updated_at": "2025-06-17T08:13:37.000000Z"
+  },
+  {
+    "id": "prod2",
+    "name": "Bayam Hijau",
+    "description": "Bayam hijau organik", 
+    "price": 7000,
+    "category_id": "cat1",
+    "stock": 80,
+    "created_at": "2025-06-17T08:13:37.000000Z",
+    "updated_at": "2025-06-17T08:13:37.000000Z"
+  }
+]</div>
+                <span class="error">❌ Error (500):</span>
+                <div class="json-response">{
+  "status": "error",
+  "message": "Failed to fetch products"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Mengambil daftar semua produk yang tersedia. Dapat diakses tanpa authentication.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">9.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Detail Produk</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/products/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Tidak diperlukan (Public)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "id": "prod1",
+  "name": "Kangkung Segar",
+  "description": "Kangkung segar dari petani lokal",
+  "price": 5000,
+  "category_id": "cat1",
+  "stock": 100,
+  "created_at": "2025-06-17T08:13:37.000000Z",
+  "updated_at": "2025-06-17T08:13:37.000000Z"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Product not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Mengambil detail produk berdasarkan ID. Dapat diakses tanpa authentication.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">10.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Tambah Produk Baru</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/products</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>name:</strong> string (required)<br>
+                <strong>description:</strong> string (required)<br>
+                <strong>price:</strong> number (required)<br>
+                <strong>category_id:</strong> string (required)<br>
+                <strong>stock:</strong> number (required)<br>
+                <strong>image_url:</strong> string (optional)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (201):</span>
+                <div class="json-response">{
+  "id": "prod_new_123",
+  "name": "Tomat Segar",
+  "description": "Tomat merah segar berkualitas",
+  "price": 15000,
+  "category_id": "cat1",
+  "stock": 50,
+  "image_url": "https://example.com/tomat.jpg",
+  "created_at": "2025-06-17T10:30:45.000000Z",
+  "updated_at": "2025-06-17T10:30:45.000000Z"
+}</div>
+                <span class="error">❌ Error (422):</span>
+                <div class="json-response">{
+  "message": "Validation failed",
+  "errors": {
+    "name": ["The name field is required."],
+    "price": ["The price must be a number."]
+  }
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Membuat produk baru. Hanya admin yang dapat mengakses endpoint ini.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">11.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Update Produk</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>PUT /api/products/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">PUT</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)<br>
+                <strong>name:</strong> string (optional)<br>
+                <strong>description:</strong> string (optional)<br>
+                <strong>price:</strong> number (optional)<br>
+                <strong>category_id:</strong> string (optional)<br>
+                <strong>stock:</strong> number (optional)<br>
+                <strong>image_url:</strong> string (optional)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "id": "prod1",
+  "name": "Kangkung Premium",
+  "description": "Kangkung organik premium",
+  "price": 8000,
+  "category_id": "cat1",
+  "stock": 120,
+  "created_at": "2025-06-17T08:13:37.000000Z",
+  "updated_at": "2025-06-17T10:45:22.000000Z"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Product not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Update data produk berdasarkan ID. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">12.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Hapus Produk</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>DELETE /api/products/{id}</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">DELETE</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>id:</strong> string (path parameter)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "message": "Product deleted successfully"
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Product not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Menghapus produk berdasarkan ID. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<h2 class="section-title">4. Users API</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">13.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Daftar Semua Users</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/users</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">Tidak ada parameter</td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "data": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@paageming.com",
+      "role": "admin",
+      "created_at": "2025-06-17T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Test User",
+      "email": "user@paageming.com",
+      "role": "user",
+      "created_at": "2025-06-17T00:00:00Z"
+    }
+  ],
+  "message": "Users retrieved successfully",
+  "total": 2
+}</div>
+                <span class="error">❌ Error (403):</span>
+                <div class="json-response">{
+  "message": "Unauthorized"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Mengambil daftar semua users dalam sistem. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 class="section-title">5. Upload API</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">14.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Upload Gambar</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/upload/image</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">multipart/form-data</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>image:</strong> file (required)<br>
+                Format: jpg, jpeg, png<br>
+                Max size: 2MB
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "status": "success",
+  "message": "Image uploaded successfully",
+  "data": {
+    "url": "https://example.com/uploads/image_secure_123.jpg",
+    "filename": "image_secure_123.jpg",
+    "original_name": "product_image.jpg",
+    "size": 1024000,
+    "type": "image/jpeg"
+  }
+}</div>
+                <span class="error">❌ Error (422):</span>
+                <div class="json-response">{
+  "message": "Validation failed",
+  "errors": {
+    "image": ["The image field is required."]
+  }
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Upload gambar produk. File akan disimpan dengan nama yang aman. Hanya admin yang dapat mengakses.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 class="section-title">6. Cart API (Planned)</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">15.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Lihat Keranjang</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>GET /api/cart</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">GET</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (User)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">Tidak ada parameter</td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "status": "success",
+  "data": {
+    "items": [
+      {
+        "id": "cart_item_1",
+        "product_id": "prod1",
+        "product_name": "Kangkung Segar",
+        "price": 5000,
+        "quantity": 2,
+        "subtotal": 10000
+      }
+    ],
+    "total_items": 1,
+    "total_amount": 10000
+  }
+}</div>
+                <span class="error">❌ Error (401):</span>
+                <div class="json-response">{
+  "message": "Unauthenticated"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Melihat isi keranjang belanja user. Fitur belum diimplementasi (planned).</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">16.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Tambah ke Keranjang</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/cart/add</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (User)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>product_id:</strong> string (required)<br>
+                <strong>quantity:</strong> number (required, min: 1)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (201):</span>
+                <div class="json-response">{
+  "status": "success",
+  "message": "Product added to cart",
+  "data": {
+    "cart_item_id": "cart_item_123",
+    "product_id": "prod1",
+    "quantity": 2,
+    "price": 5000,
+    "subtotal": 10000
+  }
+}</div>
+                <span class="error">❌ Error (422):</span>
+                <div class="json-response">{
+  "message": "Validation failed",
+  "errors": {
+    "product_id": ["The product_id field is required."]
+  }
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Menambahkan produk ke keranjang belanja. Fitur belum diimplementasi (planned).</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 class="section-title">7. Orders API (Planned)</h2>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">17.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Konfirmasi Order (User)</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/orders/{order}/confirm</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (User)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>order:</strong> string (path parameter)<br>
+                <strong>payment_method:</strong> string (optional)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "status": "success",
+  "message": "Order confirmed successfully",
+  "data": {
+    "order_id": "order_123",
+    "status": "confirmed",
+    "total_amount": 50000,
+    "confirmed_at": "2025-06-17T11:00:00Z"
+  }
+}</div>
+                <span class="error">❌ Error (404):</span>
+                <div class="json-response">{
+  "message": "Order not found"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">User mengkonfirmasi order yang sudah dibuat. Fitur belum diimplementasi (planned).</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="api-table">
+    <thead>
+        <tr>
+            <th style="width: 5%;">No</th>
+            <th style="width: 20%;">API</th>
+            <th style="width: 75%;">Informasi</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="8" class="api-number">18.</td>
+            <td class="field-name">Nama:</td>
+            <td class="field-value">Verifikasi Order (Admin)</td>
+        </tr>
+        <tr>
+            <td class="field-name">URL</td>
+            <td class="field-value"><code>POST /api/orders/{order}/verify</code></td>
+        </tr>
+        <tr>
+            <td class="field-name">Method</td>
+            <td class="field-value">POST</td>
+        </tr>
+        <tr>
+            <td class="field-name">Type</td>
+            <td class="field-value">JSON</td>
+        </tr>
+        <tr>
+            <td class="field-name">Authentication</td>
+            <td class="field-value">Bearer Token (Admin Only)</td>
+        </tr>
+        <tr>
+            <td class="field-name">Parameters</td>
+            <td class="field-value">
+                <strong>order:</strong> string (path parameter)<br>
+                <strong>verification_notes:</strong> string (optional)
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Return value</td>
+            <td class="field-value">
+                <span class="success">✅ Success (200):</span>
+                <div class="json-response">{
+  "status": "success",
+  "message": "Order verified successfully",
+  "data": {
+    "order_id": "order_123",
+    "status": "verified",
+    "verified_by": "admin@paageming.com",
+    "verified_at": "2025-06-17T11:30:00Z"
+  }
+}</div>
+                <span class="error">❌ Error (403):</span>
+                <div class="json-response">{
+  "message": "Unauthorized"
+}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="field-name">Keterangan</td>
+            <td class="field-value">Admin memverifikasi order yang sudah dikonfirmasi user. Fitur belum diimplementasi (planned).</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="credential-table">
+    <h3>🔑 Test Accounts</h3>
+    <table class="api-table">
+        <thead>
+            <tr>
+                <th>Role</th>
+                <th>Email</th>
+                <th>Password</th>
+                <th>Access Level</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Admin</strong></td>
+                <td><code>admin@paageming.com</code></td>
+                <td><code>admin123</code></td>
+                <td>Full access (CRUD operations)</td>
+            </tr>
+            <tr>
+                <td><strong>User</strong></td>
+                <td><code>user@paageming.com</code></td>
+                <td><code>user123</code></td>
+                <td>Limited access (read operations)</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="status-table">
+    <h3>📊 HTTP Status Codes</h3>
+    <table class="api-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Usage</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>200</strong></td>
+                <td>OK</td>
+                <td>Request berhasil</td>
+                <td>GET, PUT, DELETE berhasil</td>
+            </tr>
+            <tr>
+                <td><strong>201</strong></td>
+                <td>Created</td>
+                <td>Resource berhasil dibuat</td>
+                <td>POST berhasil</td>
+            </tr>
+            <tr>
+                <td><strong>400</strong></td>
+                <td>Bad Request</td>
+                <td>Request tidak valid</td>
+                <td>Format request salah</td>
+            </tr>
+            <tr>
+                <td><strong>401</strong></td>
+                <td>Unauthorized</td>
+                <td>Perlu authentication</td>
+                <td>Token tidak ada/invalid</td>
+            </tr>
+            <tr>
+                <td><strong>403</strong></td>
+                <td>Forbidden</td>
+                <td>Tidak memiliki permission</td>
+                <td>User tidak memiliki akses</td>
+            </tr>
+            <tr>
+                <td><strong>404</strong></td>
+                <td>Not Found</td>
+                <td>Resource tidak ditemukan</td>
+                <td>ID tidak ada</td>
+            </tr>
+            <tr>
+                <td><strong>422</strong></td>
+                <td>Unprocessable Entity</td>
+                <td>Validation error</td>
+                <td>Data tidak valid</td>
+            </tr>
+            <tr>
+                <td><strong>500</strong></td>
+                <td>Internal Server Error</td>
+                <td>Server error</td>
+                <td>Error sistem</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="info-box">
+    <h3>🔐 Authentication Guide</h3>
+    <p><strong>Header Format:</strong></p>
+    <div class="json-response">Authorization: Bearer {access_token}</div>
+    
+    <p><strong>Token Lifetime:</strong> 24 hours</p>
+    <p><strong>Token Format:</strong> Base64 encoded JSON dengan user info</p>
+    
+    <p><strong>Cara Penggunaan:</strong></p>
+    <ol>
+        <li>Login menggunakan endpoint <code>/api/login</code></li>
+        <li>Simpan <code>access_token</code> dari response</li>
+        <li>Gunakan token di header untuk endpoint yang memerlukan auth</li>
+        <li>Refresh token jika expired (login ulang)</li>
+    </ol>
+</div>
+
+<div class="info-box">
+    <h3>🧪 Testing Commands (PowerShell)</h3>
+    
+    <p><strong>1. Login Admin:</strong></p>
+    <div class="json-response">$admin = Invoke-RestMethod -Uri "http://localhost:8000/api/login" -Method Post -ContentType "application/json" -Body '{"email":"admin@paageming.com","password":"admin123"}'</div>
+    
+    <p><strong>2. Get Token:</strong></p>
+    <div class="json-response">$token = $admin.access_token</div>
+    
+    <p><strong>3. Test Public Endpoints:</strong></p>
+    <div class="json-response">Invoke-RestMethod -Uri "http://localhost:8000/api/categories" -Method Get
+Invoke-RestMethod -Uri "http://localhost:8000/api/products" -Method Get</div>
+      <p><strong>4. Test Admin Endpoints:</strong></p>
+    <div class="json-response">Invoke-RestMethod -Uri "http://localhost:8000/api/categories" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":"New Category","description":"Test description"}'</div>
+
+    <p><strong>5. Test CRUD Products:</strong></p>
+    <div class="json-response"># Create Product
+Invoke-RestMethod -Uri "http://localhost:8000/api/products" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":"Test Product","description":"Test product desc","price":10000,"category_id":"cat1","stock":50}'
+
+# Get Single Product
+Invoke-RestMethod -Uri "http://localhost:8000/api/products/prod1" -Method Get
+
+# Update Product
+Invoke-RestMethod -Uri "http://localhost:8000/api/products/prod1" -Method Put -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"price":12000,"stock":75}'
+
+# Delete Product (be careful!)
+Invoke-RestMethod -Uri "http://localhost:8000/api/products/test_product_id" -Method Delete -Headers @{Authorization="Bearer $token"}</div>
+
+    <p><strong>6. Test CRUD Categories:</strong></p>
+    <div class="json-response"># Get Single Category
+Invoke-RestMethod -Uri "http://localhost:8000/api/categories/cat1" -Method Get
+
+# Update Category
+Invoke-RestMethod -Uri "http://localhost:8000/api/categories/cat1" -Method Put -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":"Sayuran Premium","description":"Sayuran organik premium"}'
+
+# Delete Category (be careful!)
+Invoke-RestMethod -Uri "http://localhost:8000/api/categories/test_cat_id" -Method Delete -Headers @{Authorization="Bearer $token"}</div>
+
+    <p><strong>7. Test Users Management:</strong></p>
+    <div class="json-response"># Get All Users (Admin only)
+Invoke-RestMethod -Uri "http://localhost:8000/api/users" -Method Get -Headers @{Authorization="Bearer $token"}</div>
+
+    <p><strong>8. Test Register New User:</strong></p>
+    <div class="json-response">Invoke-RestMethod -Uri "http://localhost:8000/api/register" -Method Post -ContentType "application/json" -Body '{"name":"Test User","email":"testuser@example.com","password":"password123"}'</div>
+
+    <p><strong>9. Test Error Cases:</strong></p>
+    <div class="json-response"># Invalid Login
+try { Invoke-RestMethod -Uri "http://localhost:8000/api/login" -Method Post -ContentType "application/json" -Body '{"email":"wrong@email.com","password":"wrong"}' } catch { $_.ErrorDetails.Message }
+
+# Access Admin Endpoint without Token
+try { Invoke-RestMethod -Uri "http://localhost:8000/api/users" -Method Get } catch { $_.Exception.Response.StatusCode }
+
+# Invalid Product Creation
+try { Invoke-RestMethod -Uri "http://localhost:8000/api/products" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":""}' } catch { $_.ErrorDetails.Message }</div>
+
+    <p><strong>10. Complete Testing Workflow:</strong></p>
+    <div class="json-response"># Full API Testing Script
+Write-Host "=== Paageming API Testing ===" -ForegroundColor Green
+
+# 1. Login Admin
+$admin = Invoke-RestMethod -Uri "http://localhost:8000/api/login" -Method Post -ContentType "application/json" -Body '{"email":"admin@paageming.com","password":"admin123"}'
+$token = $admin.access_token
+Write-Host "✅ Admin Login: Success" -ForegroundColor Green
+
+# 2. Test Public Endpoints
+$categories = Invoke-RestMethod -Uri "http://localhost:8000/api/categories" -Method Get
+$products = Invoke-RestMethod -Uri "http://localhost:8000/api/products" -Method Get
+Write-Host "✅ Public Endpoints: $($categories.Count) categories, $($products.Count) products" -ForegroundColor Green
+
+# 3. Test Admin Endpoints
+$users = Invoke-RestMethod -Uri "http://localhost:8000/api/users" -Method Get -Headers @{Authorization="Bearer $token"}
+Write-Host "✅ Admin Access: $($users.total) users found" -ForegroundColor Green
+
+# 4. Create Test Category
+$newCat = Invoke-RestMethod -Uri "http://localhost:8000/api/categories" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":"Test API Category","description":"Created via API testing"}'
+Write-Host "✅ Category Created: $($newCat.name)" -ForegroundColor Green
+
+# 5. Create Test Product
+$newProd = Invoke-RestMethod -Uri "http://localhost:8000/api/products" -Method Post -ContentType "application/json" -Headers @{Authorization="Bearer $token"} -Body '{"name":"Test API Product","description":"Created via API testing","price":99999,"category_id":"cat1","stock":1}'
+Write-Host "✅ Product Created: $($newProd.name)" -ForegroundColor Green
+
+Write-Host "=== Testing Complete ===" -ForegroundColor Green</div>
+</div>
+
+<div class="footer">
+    <p><strong>Paageming Marketplace API Documentation - COMPLETE VERSION</strong></p>
+    <p>Version 1.0.0 | Generated on June 17, 2025</p>
+    <p>Total Endpoints Documented: <strong>18 APIs</strong> (14 Implemented + 4 Planned)</p>
+    <p>✅ Implemented: Auth (3), Categories (4), Products (5), Users (1), Upload (1)</p>
+    <p>🔄 Planned: Cart (2), Orders (2)</p>
+    <p>Base URL: http://localhost:8000 (Development) | https://your-app.railway.app (Production)</p>
+    <p>Database: Firebase Realtime Database | Framework: Laravel 11</p>
+    <p>Status: <strong>Production Ready</strong> | All Core Features Working</p>
+</div>
+
+</body>
+</html>

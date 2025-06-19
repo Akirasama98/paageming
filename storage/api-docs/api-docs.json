@@ -14,8 +14,8 @@
     },
     "servers": [
         {
-            "url": "https://paageming-production.up.railway.app",
-            "description": "Paageming API Production Server"
+            "url": "http://localhost:8000",
+            "description": "Paageming API Server"
         }
     ],
     "paths": {
@@ -365,7 +365,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -387,7 +387,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -432,7 +432,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -536,7 +536,7 @@
                         "description": "Filter produk berdasarkan kategori",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -612,7 +612,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -634,7 +634,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],
@@ -657,7 +657,7 @@
                                         "type": "integer"
                                     },
                                     "category_id": {
-                                        "type": "integer"
+                                        "type": "string"
                                     },
                                     "image_url": {
                                         "type": "string"
@@ -691,7 +691,7 @@
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     }
                 ],

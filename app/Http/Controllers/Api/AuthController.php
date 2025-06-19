@@ -38,26 +38,51 @@ class AuthController extends Controller
      *          description="Validation error"
      *      )
      * )
-     */
-    public function register(Request $request)
+     */    public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:6',
         ]);
 
-        $user = User::create([
+        // Generate user ID (timestamp)
+        $userId = time();
+        $user = [
+            'id' => $userId,
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            'password' => $request->password, // simpan cleartext agar login mudah
+            'role' => 'user',
+            'created_at' => now()->toIso8601String(),
+        ];
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Simpan ke Firebase
+        try {
+            $factory = (new \Kreait\Firebase\Factory)
+                ->withServiceAccount(config('firebase.credentials.file'))
+                ->withDatabaseUri(config('firebase.database_url'));
+            $database = $factory->createDatabase();
+            $database->getReference('users/' . $userId)->set($user);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Register failed: cannot save to Firebase',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+
+        // Generate simple JWT-like token for testing
+        $token = base64_encode(json_encode([
+            'user_id' => $user['id'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+            'expires_at' => time() + (24 * 60 * 60) // 24 hours
+        ]));
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user' => $user
         ], 201);
     }
 
@@ -83,30 +108,83 @@ class AuthController extends Controller
      *         description="Login gagal"
      *     )
      * )
-     */
-    public function login(Request $request)
+     */    public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // Hardcoded users for testing (since we're using Firebase for products)
+        $testUsers = [
+            [
+                'id' => 1,
+                'name' => 'Admin User',
+                'email' => 'admin@paageming.com',
+                'password' => 'admin123',
+                'role' => 'admin'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Test User',
+                'email' => 'user@paageming.com',
+                'password' => 'user123',
+                'role' => 'user'
+            ]
+        ];
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        $user = null;
+        foreach ($testUsers as $testUser) {
+            if ($testUser['email'] === $request->email && $testUser['password'] === $request->password) {
+                $user = $testUser;
+                break;
+            }
+        }
+
+        // Jika tidak ditemukan di hardcoded, cek ke Firebase
+        if (!$user) {
+            try {
+                $factory = (new \Kreait\Firebase\Factory)
+                    ->withServiceAccount(config('firebase.credentials.file'))
+                    ->withDatabaseUri(config('firebase.database_url'));
+                $database = $factory->createDatabase();
+                $usersRef = $database->getReference('users')->getValue();
+                if ($usersRef) {
+                    foreach ($usersRef as $firebaseUser) {
+                        if (
+                            isset($firebaseUser['email']) && $firebaseUser['email'] === $request->email &&
+                            isset($firebaseUser['password']) && $firebaseUser['password'] === $request->password
+                        ) {
+                            $user = $firebaseUser;
+                            break;
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                return response()->json(['message' => 'Login failed: cannot connect to Firebase', 'error' => $e->getMessage()], 500);
+            }
+        }
+
+        if (!$user) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        // Generate simple JWT-like token for testing
+        $token = base64_encode(json_encode([
+            'user_id' => $user['id'],
+            'email' => $user['email'],
+            'role' => $user['role'],
+            'expires_at' => time() + (24 * 60 * 60) // 24 hours
+        ]));
 
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'role' => $user['role']
             ]
         ]);
     }
@@ -124,10 +202,10 @@ class AuthController extends Controller
      *          description="Successfully logged out"
      *      )
      * )
-     */
-    public function logout(Request $request)
+     */    public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        // For testing purposes, just return success message
+        // In real implementation, you would invalidate the token
         return response()->json(['message' => 'Successfully logged out']);
     }
 }

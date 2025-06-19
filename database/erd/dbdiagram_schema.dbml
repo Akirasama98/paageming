@@ -1,0 +1,192 @@
+// Paageming Database Schema for dbdiagram.io
+// Copy and paste this entire code to https://dbdiagram.io/d
+
+Table users {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  name varchar(255) [not null, note: 'User full name']
+  email varchar(255) [unique, not null, note: 'User email address']
+  password varchar(255) [note: 'Hashed password']
+  role enum('admin', 'user') [default: 'user', note: 'User role']
+  email_verified_at timestamp [null]
+  remember_token varchar(100) [null]
+  created_at timestamp [default: `now()`, note: 'Record creation time']
+  updated_at timestamp [default: `now()`, note: 'Record update time']
+  
+  indexes {
+    email [unique, name: 'idx_users_email']
+    role [name: 'idx_users_role']
+  }
+  
+  note: 'System users (admin and customers)'
+}
+
+Table categories {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  name varchar(255) [not null, note: 'Category name']
+  description text [null, note: 'Category description']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    name [name: 'idx_categories_name']
+  }
+  
+  note: 'Product categories (vegetables, fruits, etc.)'
+}
+
+Table products {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  category_id varchar(36) [not null, ref: > categories.id]
+  name varchar(255) [not null, note: 'Product name']
+  description text [null, note: 'Product description']
+  price decimal(10,2) [not null, note: 'Product price in IDR']
+  stock integer [not null, default: 0, note: 'Available stock quantity']
+  image_url varchar(500) [null, note: 'Product image URL']
+  status enum('active', 'inactive') [default: 'active', note: 'Product status']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    category_id [name: 'idx_products_category']
+    status [name: 'idx_products_status']
+    name [name: 'idx_products_name']
+    price [name: 'idx_products_price']
+  }
+  
+  note: 'Agricultural products for sale'
+}
+
+Table carts {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  user_id varchar(36) [not null, ref: > users.id]
+  status enum('active', 'checkout') [default: 'active', note: 'Cart status']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    user_id [name: 'idx_carts_user']
+    status [name: 'idx_carts_status']
+    (user_id, status) [unique, name: 'unique_active_cart']
+  }
+  
+  note: 'Shopping carts for users'
+}
+
+Table cart_items {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  cart_id varchar(36) [not null, ref: > carts.id]
+  product_id varchar(36) [not null, ref: > products.id]
+  quantity integer [not null, note: 'Item quantity in cart']
+  price_at_time decimal(10,2) [not null, note: 'Product price when added to cart']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    cart_id [name: 'idx_cart_items_cart']
+    product_id [name: 'idx_cart_items_product']
+    (cart_id, product_id) [unique, name: 'unique_cart_product']
+  }
+  
+  note: 'Items within shopping carts'
+}
+
+Table orders {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  user_id varchar(36) [not null, ref: > users.id]
+  total_amount decimal(12,2) [not null, note: 'Total order amount in IDR']
+  status enum('pending', 'processing', 'shipped', 'delivered', 'cancelled') [default: 'pending', note: 'Order status']
+  shipping_address text [not null, note: 'Delivery address']
+  payment_method enum('cash', 'transfer', 'ewallet') [not null, note: 'Payment method']
+  payment_status enum('pending', 'paid', 'failed') [default: 'pending', note: 'Payment status']
+  notes text [null, note: 'Order notes or special instructions']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    user_id [name: 'idx_orders_user']
+    status [name: 'idx_orders_status']
+    payment_status [name: 'idx_orders_payment_status']
+    created_at [name: 'idx_orders_created']
+  }
+  
+  note: 'Customer orders'
+}
+
+Table order_items {
+  id varchar(36) [primary key, note: 'UUID primary key']
+  order_id varchar(36) [not null, ref: > orders.id]
+  product_id varchar(36) [not null, ref: > products.id]
+  quantity integer [not null, note: 'Ordered quantity']
+  price_at_time decimal(10,2) [not null, note: 'Product price at time of order']
+  subtotal decimal(10,2) [not null, note: 'Line item subtotal']
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  
+  indexes {
+    order_id [name: 'idx_order_items_order']
+    product_id [name: 'idx_order_items_product']
+  }
+  
+  note: 'Individual items within orders'
+}
+
+// Additional tables for future features
+Table product_images {
+  id varchar(36) [primary key]
+  product_id varchar(36) [not null, ref: > products.id]
+  image_url varchar(500) [not null, note: 'Image URL']
+  is_primary boolean [default: false, note: 'Is primary product image']
+  sort_order integer [default: 0, note: 'Display order']
+  created_at timestamp [default: `now()`]
+  
+  note: 'Multiple images per product'
+}
+
+Table product_reviews {
+  id varchar(36) [primary key]
+  product_id varchar(36) [not null, ref: > products.id]
+  user_id varchar(36) [not null, ref: > users.id]
+  rating integer [not null, note: 'Rating 1-5']
+  comment text [null, note: 'Review comment']
+  created_at timestamp [default: `now()`]
+  
+  indexes {
+    product_id [name: 'idx_reviews_product']
+    user_id [name: 'idx_reviews_user']
+    rating [name: 'idx_reviews_rating']
+  }
+  
+  note: 'Product reviews and ratings'
+}
+
+Table notifications {
+  id varchar(36) [primary key]
+  user_id varchar(36) [not null, ref: > users.id]
+  title varchar(255) [not null]
+  message text [not null]
+  type enum('order', 'promotion', 'system') [not null]
+  is_read boolean [default: false]
+  created_at timestamp [default: `now()`]
+  
+  indexes {
+    user_id [name: 'idx_notifications_user']
+    is_read [name: 'idx_notifications_read']
+    type [name: 'idx_notifications_type']
+  }
+  
+  note: 'User notifications'
+}
+
+// Relationships Documentation
+// One-to-Many Relationships:
+// - users → carts (1:N) - A user can have multiple carts
+// - users → orders (1:N) - A user can have multiple orders  
+// - categories → products (1:N) - A category can have multiple products
+// - carts → cart_items (1:N) - A cart can have multiple items
+// - orders → order_items (1:N) - An order can have multiple items
+// - products → cart_items (1:N) - A product can be in multiple carts
+// - products → order_items (1:N) - A product can be in multiple orders
+// - products → product_images (1:N) - A product can have multiple images
+// - products → product_reviews (1:N) - A product can have multiple reviews
+// - users → product_reviews (1:N) - A user can write multiple reviews
+// - users → notifications (1:N) - A user can have multiple notifications

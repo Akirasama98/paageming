@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Category;
 use Kreait\Firebase\Factory;
 
 class CategoryController extends Controller
 {
-    /**
+    private $database;    public function __construct()
+    {
+        $factory = (new Factory)
+            ->withServiceAccount(config('firebase.credentials.file'))
+            ->withDatabaseUri(config('firebase.database_url'));
+        $this->database = $factory->createDatabase();
+    }/**
      * @OA\Get(
      *     path="/api/categories",
      *     tags={"Categories"},
@@ -19,13 +24,29 @@ class CategoryController extends Controller
      *         description="List kategori"
      *     )
      * )
-     */
-    public function index()
+     */    public function index()
     {
-        return response()->json(Category::all());
-    }
-
-    /**
+        try {
+            $categoriesData = $this->database->getReference('categories')->getValue();
+            
+            // If no data in Firebase, return empty array
+            if (!$categoriesData) {
+                return response()->json([]);
+            }
+            
+            // Format the data with IDs
+            $categories = [];
+            foreach ($categoriesData as $categoryId => $categoryData) {
+                $categoryData['id'] = $categoryId;
+                $categories[] = $categoryData;
+            }
+            
+            return response()->json($categories);        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch categories: ' . $e->getMessage()
+            ], 500);
+        }
+    }/**
      * @OA\Post(
      *     path="/api/categories",
      *     tags={"Categories"},
@@ -49,19 +70,32 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string'
         ]);
-        $category = Category::create($request->all());
 
-        // Simpan ke Firebase Realtime Database
-        $factory = (new Factory)->withServiceAccount(config('firebase.credentials.file'));
-        $database = $factory->createDatabase();
-        $database->getReference('categories/'.$category->id)
-            ->set($category->toArray());
+        try {
+            // Generate new category ID
+            $newRef = $this->database->getReference('categories')->push();
+            $categoryId = $newRef->getKey();
+            
+            $categoryData = [
+                'id' => $categoryId,
+                'name' => $request->name,
+                'description' => $request->description ?? '',
+                'created_at' => date('Y-m-d\TH:i:s.u\Z'),
+                'updated_at' => date('Y-m-d\TH:i:s.u\Z')
+            ];
 
-        return response()->json($category, 201);
-    }
+            // Save to Firebase
+            $this->database->getReference('categories/' . $categoryId)->set($categoryData);
 
-    /**
+            return response()->json($categoryData, 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to create category: ' . $e->getMessage()
+            ], 500);
+        }
+    }    /**
      * @OA\Get(
      *     path="/api/categories/{category}",
      *     tags={"Categories"},
@@ -70,7 +104,7 @@ class CategoryController extends Controller
      *         name="category",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -78,12 +112,22 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function show(Category $category)
+    public function show($categoryId)
     {
-        return response()->json($category);
-    }
-
-    /**
+        try {
+            $category = $this->database->getReference('categories/' . $categoryId)->getValue();
+            
+            if (!$category) {
+                return response()->json(['message' => 'Category not found'], 404);
+            }
+            
+            $category['id'] = $categoryId;
+            return response()->json($category);        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to fetch category: ' . $e->getMessage()
+            ], 500);
+        }
+    }/**
      * @OA\Put(
      *     path="/api/categories/{category}",
      *     tags={"Categories"},
@@ -93,7 +137,7 @@ class CategoryController extends Controller
      *         name="category",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\RequestBody(
      *         required=true,
@@ -108,13 +152,45 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $categoryId)
     {
-        $category->update($request->all());
-        return response()->json($category);
-    }
-
-    /**
+        try {
+            // Check if category exists
+            $category = $this->database->getReference('categories/' . $categoryId)->getValue();
+            
+            if (!$category) {
+                return response()->json(['message' => 'Category not found'], 404);
+            }
+            
+            $request->validate([
+                'name' => 'sometimes|required|string|max:255',
+                'description' => 'nullable|string'
+            ]);
+            
+            // Update data
+            $updateData = [];
+            if ($request->has('name')) {
+                $updateData['name'] = $request->name;
+            }
+            if ($request->has('description')) {
+                $updateData['description'] = $request->description;
+            }
+            $updateData['updated_at'] = date('Y-m-d\TH:i:s.u\Z');
+            
+            // Update in Firebase
+            $this->database->getReference('categories/' . $categoryId)->update($updateData);
+            
+            // Get updated data
+            $updatedCategory = $this->database->getReference('categories/' . $categoryId)->getValue();
+            $updatedCategory['id'] = $categoryId;
+            
+            return response()->json($updatedCategory);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update category: ' . $e->getMessage()
+            ], 500);
+        }
+    }    /**
      * @OA\Delete(
      *     path="/api/categories/{category}",
      *     tags={"Categories"},
@@ -124,7 +200,7 @@ class CategoryController extends Controller
      *         name="category",
      *         in="path",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         @OA\Schema(type="string")
      *     ),
      *     @OA\Response(
      *         response=204,
@@ -132,9 +208,24 @@ class CategoryController extends Controller
      *     )
      * )
      */
-    public function destroy(Category $category)
+    public function destroy($categoryId)
     {
-        $category->delete();
-        return response()->json(null, 204);
+        try {
+            // Check if category exists
+            $category = $this->database->getReference('categories/' . $categoryId)->getValue();
+            
+            if (!$category) {
+                return response()->json(['message' => 'Category not found'], 404);
+            }
+            
+            // Delete from Firebase
+            $this->database->getReference('categories/' . $categoryId)->remove();
+            
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete category: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

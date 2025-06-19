@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasi API Paageming</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            background: white;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            background: #f8f9fa;
+            padding: 20px;
+            border-bottom: 1px solid #e1e8ed;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .endpoint {
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .endpoint-header {
+            background: #007bff;
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .endpoint-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .endpoint-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e1e8ed;
+            vertical-align: top;
+        }
+        
+        .endpoint-table td:first-child {
+            background: #f8f9fa;
+            font-weight: bold;
+            width: 150px;
+            color: #495057;
+        }
+        
+        .endpoint-table td:last-child {
+            background: white;
+        }
+        
+        .method-get { background: #28a745 !important; }
+        .method-post { background: #007bff !important; }
+        .method-put { background: #ffc107 !important; color: #212529 !important; }
+        .method-delete { background: #dc3545 !important; }
+        
+        .code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin: 10px 0;
+        }
+        
+        .json {
+            background: #263238;
+            color: #eeffff;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .info-table th,
+        .info-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+        
+        .info-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .info-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .badge-success { background: #28a745; }
+        .badge-info { background: #17a2b8; }
+        .badge-warning { background: #ffc107; color: #212529; }
+        .badge-danger { background: #dc3545; }
+        
+        @media print {
+            body { margin: 0; padding: 15px; }
+            .header { break-inside: avoid; }
+            .section { break-inside: avoid; page-break-inside: avoid; }
+            .endpoint { break-inside: avoid; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌾 Dokumentasi API Paageming</h1>
+        <p>Agricultural Product Management System</p>
+        <p><strong>Version 1.0</strong> | Updated: June 17, 2025</p>
+    </div>
+
+    <!-- System Information -->
+    <div class="section">
+        <div class="section-header">📋 Informasi Sistem</div>
+        <table class="info-table">
+            <tr><td><strong>Nama Sistem</strong></td><td>Paageming (Agricultural Product Management System)</td></tr>
+            <tr><td><strong>Base URL Development</strong></td><td><code>http://localhost:8001/api</code></td></tr>
+            <tr><td><strong>Base URL Production</strong></td><td><code>https://your-railway-domain.com/api</code></td></tr>
+            <tr><td><strong>Format Response</strong></td><td>JSON</td></tr>
+            <tr><td><strong>Authentication</strong></td><td>Bearer Token (custom JWT-like)</td></tr>
+            <tr><td><strong>Database</strong></td><td>Firebase Realtime Database</td></tr>
+            <tr><td><strong>Documentation</strong></td><td><a href="/api/documentation" target="_blank">Swagger UI</a></td></tr>
+        </table>
+    </div>
+
+    <!-- Authentication Endpoints -->
+    <div class="section">
+        <div class="section-header">🔐 1. Authentication Endpoints</div>
+        
+        <!-- Register -->
+        <div class="endpoint">
+            <div class="endpoint-header method-post">1.1 Register User</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Register</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/register</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>JSON</td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>
+                        <div class="code">name: string (required)
+email: string (required)
+password: string (required)
+role: string (optional, default: user)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "message": "User registered successfully",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "user"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}</div>
+                        <strong class="error">Gagal:</strong>
+                        <div class="json">{
+  "message": "Validation failed",
+  "errors": {
+    "email": ["Email already exists"]
+  }
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Digunakan untuk mendaftar user baru ke sistem</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Login -->
+        <div class="endpoint">
+            <div class="endpoint-header method-post">1.2 Login User</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Login</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/login</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>JSON</td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>
+                        <div class="code">email: string (required)
+password: string (required)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "name": "John Doe", 
+    "email": "john@example.com",
+    "role": "user"
+  },
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+}</div>
+                        <strong class="error">Gagal:</strong>
+                        <div class="json">{
+  "message": "Invalid credentials"
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Digunakan untuk login ke sistem</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Logout -->
+        <div class="endpoint">
+            <div class="endpoint-header method-post">1.3 Logout User</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Logout</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/logout</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td><span class="badge badge-warning">Bearer Token</span></td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "message": "Logout successful"
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Digunakan untuk logout dari sistem</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Management -->
+    <div class="section">
+        <div class="section-header">👥 2. User Management Endpoints</div>
+        
+        <div class="endpoint">
+            <div class="endpoint-header method-get">2.1 Get All Users</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Get Users</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>GET /api/users</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-success">GET</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td>Public (demo purpose)</td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "data": [
+    {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@paageming.com",
+      "role": "admin",
+      "created_at": "2025-06-17T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Test User", 
+      "email": "user@paageming.com",
+      "role": "user",
+      "created_at": "2025-06-17T00:00:00Z"
+    }
+  ],
+  "message": "Users retrieved successfully",
+  "total": 2
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Mengambil daftar semua users (hardcoded untuk demo)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Category Management -->
+    <div class="section">
+        <div class="section-header">📂 3. Category Management Endpoints</div>
+        
+        <!-- Get Categories -->
+        <div class="endpoint">
+            <div class="endpoint-header method-get">3.1 Get All Categories</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Get Categories</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>GET /api/categories</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-success">GET</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">[
+  {
+    "id": "cat1",
+    "name": "Sayuran",
+    "description": "Sayuran segar dari petani lokal",
+    "created_at": "2025-06-17T08:13:36.000000Z",
+    "updated_at": "2025-06-17T08:13:36.000000Z"
+  },
+  {
+    "id": "cat2",
+    "name": "Buah-buahan",
+    "description": "Buah segar berkualitas tinggi",
+    "created_at": "2025-06-17T08:13:36.000000Z", 
+    "updated_at": "2025-06-17T08:13:36.000000Z"
+  }
+]</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Mengambil semua kategori produk dari Firebase</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Create Category -->
+        <div class="endpoint">
+            <div class="endpoint-header method-post">3.2 Create Category</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Create Category</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/categories</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td><span class="badge badge-danger">Bearer Token (Admin only)</span></td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>
+                        <div class="code">name: string (required)
+description: string (optional)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "id": "-OSwzLKDAQDPvAtqX9Gu",
+  "name": "Bumbu Dapur",
+  "description": "Bumbu dapur segar",
+  "created_at": "2025-06-17T08:24:34.000000Z",
+  "updated_at": "2025-06-17T08:24:34.000000Z"
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Membuat kategori baru (hanya admin)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Product Management -->
+    <div class="section">
+        <div class="section-header">🛒 4. Product Management Endpoints</div>
+        
+        <!-- Get Products -->
+        <div class="endpoint">
+            <div class="endpoint-header method-get">4.1 Get All Products</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Get Products</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>GET /api/products</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-success">GET</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">[
+  {
+    "id": "prod1",
+    "category_id": "cat1",
+    "name": "Kangkung Segar",
+    "description": "Kangkung segar dari petani lokal",
+    "price": 5000,
+    "stock": 100,
+    "image_url": null,
+    "created_at": "2025-06-17T08:13:37.000000Z",
+    "updated_at": "2025-06-17T08:13:37.000000Z"
+  }
+]</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Mengambil semua produk dari Firebase</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Create Product -->
+        <div class="endpoint">
+            <div class="endpoint-header method-post">4.2 Create Product</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Create Product</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/products</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td><span class="badge badge-danger">Bearer Token (Admin only)</span></td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>
+                        <div class="code">category_id: string (required)
+name: string (required)
+description: string (optional)
+price: number (required)
+stock: number (required)
+image_url: string (optional)</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Membuat produk baru (hanya admin)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- File Upload -->
+    <div class="section">
+        <div class="section-header">📁 5. File Upload Endpoints</div>
+        
+        <div class="endpoint">
+            <div class="endpoint-header method-post">5.1 Upload Image</div>
+            <table class="endpoint-table">
+                <tr>
+                    <td>Nama</td>
+                    <td>Upload Image</td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td><code>POST /api/upload</code></td>
+                </tr>
+                <tr>
+                    <td>Method</td>
+                    <td><span class="badge badge-info">POST</span></td>
+                </tr>
+                <tr>
+                    <td>Type</td>
+                    <td>Multipart/Form-Data</td>
+                </tr>
+                <tr>
+                    <td>Autentifikasi</td>
+                    <td><span class="badge badge-danger">Bearer Token (Admin only)</span></td>
+                </tr>
+                <tr>
+                    <td>Parameters</td>
+                    <td>
+                        <div class="code">file: file (required, image only)
+max_size: 2MB
+allowed_types: jpg, jpeg, png, gif</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Return value</td>
+                    <td>
+                        <strong class="success">JSON Success:</strong>
+                        <div class="json">{
+  "message": "File uploaded successfully",
+  "file": {
+    "filename": "20250617_secure_filename.jpg",
+    "original_name": "product_image.jpg",
+    "size": 1024576,
+    "mime_type": "image/jpeg",
+    "url": "/storage/products/20250617_secure_filename.jpg"
+  }
+}</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Keterangan</td>
+                    <td>Upload gambar produk dengan validasi keamanan (hanya admin)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Error Codes -->
+    <div class="section">
+        <div class="section-header">⚠️ 6. Error Codes & Status</div>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>HTTP Status</th>
+                    <th>Description</th>
+                    <th>Example Response</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-success">200</span></td>
+                    <td>OK - Request successful</td>
+                    <td><code>{"message": "Success"}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-success">201</span></td>
+                    <td>Created - Resource created successfully</td>
+                    <td><code>{"message": "Created", "data": {...}}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-info">204</span></td>
+                    <td>No Content - Delete successful</td>
+                    <td>No response body</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">400</span></td>
+                    <td>Bad Request - Invalid request</td>
+                    <td><code>{"message": "Bad request"}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">401</span></td>
+                    <td>Unauthorized - Authentication required</td>
+                    <td><code>{"message": "Unauthorized"}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">403</span></td>
+                    <td>Forbidden - Insufficient permissions</td>
+                    <td><code>{"message": "Forbidden"}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">404</span></td>
+                    <td>Not Found - Resource not found</td>
+                    <td><code>{"message": "Not found"}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">422</span></td>
+                    <td>Validation Error - Invalid input data</td>
+                    <td><code>{"message": "Validation failed", "errors": {...}}</code></td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-danger">500</span></td>
+                    <td>Internal Server Error - Server error</td>
+                    <td><code>{"message": "Internal server error"}</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Authentication Headers -->
+    <div class="section">
+        <div class="section-header">🔑 7. Authentication Headers</div>
+        <p>Untuk endpoint yang memerlukan autentifikasi, sertakan header berikut:</p>
+        <div class="code">Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+Content-Type: application/json</div>
+    </div>
+
+    <!-- Test Credentials -->
+    <div class="section">
+        <div class="section-header">🧪 8. Sample Test Credentials</div>
+        <table class="info-table">
+            <thead>
+                <tr>
+                    <th>User Type</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Admin User</strong></td>
+                    <td><code>admin@paageming.com</code></td>
+                    <td><code>password</code></td>
+                    <td><span class="badge badge-danger">admin</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Regular User</strong></td>
+                    <td><code>user@paageming.com</code></td>
+                    <td><code>password</code></td>
+                    <td><span class="badge badge-info">user</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 50px; padding: 30px; color: #6c757d; border-top: 1px solid #e1e8ed;">
+        <p><strong>🌾 Paageming API Documentation</strong></p>
+        <p>Agricultural Product Management System</p>
+        <p>Version 1.0 | Last Updated: June 17, 2025</p>
+        <p>Built with Laravel 11 + Firebase | Documented with ❤️</p>
+    </div>
+</body>
+</html>
