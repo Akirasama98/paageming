@@ -55,6 +55,15 @@ DELETE /api/products/{id} # Delete product
 GET /api/categories      # List all categories
 ```
 
+### **Cart Management** 🛒
+```
+GET    /api/cart         # Get cart contents
+POST   /api/cart/add     # Add product to cart
+PUT    /api/cart/update/{productId} # Update item quantity
+DELETE /api/cart/remove/{productId} # Remove item from cart
+POST   /api/cart/checkout # Checkout cart
+```
+
 ### **File Upload**
 ```
 POST /api/upload         # Upload to Firebase Storage
@@ -94,6 +103,22 @@ curl -X POST https://your-api.railway.app/api/products \
     "stock": 100,
     "category_id": 1
   }'
+```
+
+### **Cart Operations:**
+```bash
+# Add to cart
+curl -X POST https://your-api.railway.app/api/cart/add \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"product_id":"prod1","quantity":2}'
+
+# Get cart
+curl -X GET https://your-api.railway.app/api/cart \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Checkout
+curl -X POST https://your-api.railway.app/api/cart/checkout \
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ## ⚙️ **Environment Variables**
@@ -160,6 +185,7 @@ npm run dev
 - ✅ **RESTful API** design
 - ✅ **JWT Authentication** 
 - ✅ **Firebase Integration**
+- ✅ **Shopping Cart** with checkout
 - ✅ **File Upload** support
 - ✅ **API Documentation**
 - ✅ **Production Ready**

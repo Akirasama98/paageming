@@ -21,13 +21,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/products/{product}', 'App\\Http\\Controllers\\Api\\ProductController@destroy');
         Route::post('/upload/image', 'App\\Http\\Controllers\\Api\\UploadController@uploadImage');
         Route::post('/orders/{order}/verify', 'App\\Http\\Controllers\\Api\\OrderController@verify');
-    });
-
-    // USER ROUTES (authenticated users)
+    });    // USER ROUTES (authenticated users)
     Route::get('/cart', 'App\\Http\\Controllers\\Api\\CartController@index');
     Route::post('/cart/add', 'App\\Http\\Controllers\\Api\\CartController@add');
-    Route::put('/cart/update/{item}', 'App\\Http\\Controllers\\Api\\CartController@update');
-    Route::delete('/cart/remove/{item}', 'App\\Http\\Controllers\\Api\\CartController@remove');
+    Route::put('/cart/update/{productId}', 'App\\Http\\Controllers\\Api\\CartController@update');
+    Route::delete('/cart/remove/{productId}', 'App\\Http\\Controllers\\Api\\CartController@remove');
     Route::post('/cart/checkout', 'App\\Http\\Controllers\\Api\\CartController@checkout');
     Route::post('/orders/{order}/confirm', 'App\\Http\\Controllers\\Api\\OrderController@confirm');
 });
@@ -37,6 +35,13 @@ Route::get('/categories', 'App\\Http\\Controllers\\Api\\CategoryController@index
 Route::get('/categories/{category}', 'App\\Http\\Controllers\\Api\\CategoryController@show');
 Route::get('/products', 'App\\Http\\Controllers\\Api\\ProductController@index');
 Route::get('/products/{product}', 'App\\Http\\Controllers\\Api\\ProductController@show');
+
+// CART ROUTES (with custom token validation)
+Route::get('/cart', 'App\\Http\\Controllers\\Api\\CartController@index');
+Route::post('/cart/add', 'App\\Http\\Controllers\\Api\\CartController@add');
+Route::put('/cart/update/{productId}', 'App\\Http\\Controllers\\Api\\CartController@update');
+Route::delete('/cart/remove/{productId}', 'App\\Http\\Controllers\\Api\\CartController@remove');
+Route::post('/cart/checkout', 'App\\Http\\Controllers\\Api\\CartController@checkout');
 
 // PRODUCTS CRUD (Public for testing - in production should be protected)
 Route::post('/products', 'App\\Http\\Controllers\\Api\\ProductController@store');
